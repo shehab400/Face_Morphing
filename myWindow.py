@@ -8,9 +8,10 @@ import sys
 import matplotlib.pyplot as plt
 from outputWindow import OutputWindow
 import numpy as np
-
+from Image import *
 count = 0
 
+Images=[]
 class MyWindow(QMainWindow):
 
     def __init__(self):
@@ -20,10 +21,14 @@ class MyWindow(QMainWindow):
         # self.ui.setupUi(self)
         self.setWindowTitle('Fourier Transform Mixer')
         self.ui.applyButton.clicked.connect(self.open_output_window)
-        self.ui.fixedImage1.mouseDoubleClickEvent =lambda event: self.imageDisplay(self.ui.fixedImage1)
-        self.ui.fixedImage2.mouseDoubleClickEvent =lambda event: self.imageDisplay(self.ui.fixedImage2)
-        self.ui.fixedImage3.mouseDoubleClickEvent =lambda event: self.imageDisplay(self.ui.fixedImage3)
-        self.ui.fixedImage4.mouseDoubleClickEvent =lambda event: self.imageDisplay(self.ui.fixedImage4)
+        self.ui.fixedImage1.mousePressEvent = lambda event: self.removeImage(1,self.ui.fixedImage1)
+        self.ui.fixedImage2.mousePressEvent = lambda event: self.removeImage(2,self.ui.fixedImage2)
+        self.ui.fixedImage3.mousePressEvent = lambda event: self.removeImage(3,self.ui.fixedImage3)
+        self.ui.fixedImage4.mousePressEvent = lambda event: self.removeImage(4,self.ui.fixedImage4)
+        self.ui.fixedImage1.mouseDoubleClickEvent =lambda event: self.imageDisplay(self.ui.fixedImage1,1)
+        self.ui.fixedImage2.mouseDoubleClickEvent =lambda event: self.imageDisplay(self.ui.fixedImage2,2)
+        self.ui.fixedImage3.mouseDoubleClickEvent =lambda event: self.imageDisplay(self.ui.fixedImage3,3)
+        self.ui.fixedImage4.mouseDoubleClickEvent =lambda event: self.imageDisplay(self.ui.fixedImage4,4)
 
     def open_output_window(self):
         global count
@@ -37,36 +42,47 @@ class MyWindow(QMainWindow):
             count = 0
             pass
 
-    def imageDisplay(self , Qlabel):
-        fname = QFileDialog.getOpenFileName(self, "open fie", "D:\College\College Year 3 (Junior)\DSP\Task 4\Face_Morphing\Images", "All Files (*)" )
+    def imageDisplay(self , Qlabel,imglabel):
+        img=Image()
+        img.imagelabel=imglabel
+        filename = QtWidgets.QFileDialog.getOpenFileName()
+        img.path = filename[0]
         # self.path
-
         # self.label = self.findChild(Qlabel, "Qlabel")
-
-        original_image = QImage(fname[0])
+        original_image = QImage(img.path)
         grayscale_image = original_image.convertToFormat(QImage.Format_Grayscale8)
-        
         self.pixmap = QPixmap.fromImage(grayscale_image)
         Qlabel.setPixmap(self.pixmap)
 
-        # self.raw_data = plt.imread(self.path)
-        # self.raw_data = self.raw_data.astype('float32')
-        # self.raw_data /= 255
-
-
-        # # Get size
-        # self.shape = self.raw_data.shape
-        # self.width = self.shape[0]
-        # self.height = self.shape[1]
+        raw_data = plt.imread(img.path)
+        raw_data = raw_data.astype('float32')
+        raw_data /= 255
+        img.raw_data=raw_data
+        # Get size
+        img.shape = img.raw_data.shape
+        img.width = img.shape[0]
+        img.height = img.shape[1]
         
         # # Fourier FFT
-        # self.fft = np.fft.fft2(self.raw_data)
+        img.fft = np.fft.fft2(img.raw_data)
         # # Get magnitude
-        # self.magnitude = np.abs(self.fft)
+        img.magnitude = np.abs(img.fft)
         # # Get phase
-        # self.phase = np.angle(self.fft)
+        img.phase = np.angle(img.fft)
         # # Get real
-        # self.real = np.real(self.fft)
+        img.real = np.real(img.fft)
         # # Get imag
-        # self.imaginary = np.imag(self.fft)
+        img.imaginary = np.imag(img.fft)
+        Images.append(img)
+        print(len(Images)) ############### need to create remove image function to update length of images array
 
+    def removeImage(self,imglabel,Qlabel):
+        if imglabel==0:
+            return
+        else:
+            for index, image in enumerate(Images):
+              if image.imagelabel ==imglabel :
+                 Qlabel.clear()
+                 Images.pop(index)
+                 print(len(Images))
+            
