@@ -8,9 +8,10 @@ import sys
 import matplotlib.pyplot as plt
 from outputWindow import OutputWindow
 import numpy as np
-
+from Image import *
 count = 0
 
+Images=[]
 class MyWindow(QMainWindow):
 
     def __init__(self):
@@ -38,35 +39,35 @@ class MyWindow(QMainWindow):
             pass
 
     def imageDisplay(self , Qlabel):
-        fname = QFileDialog.getOpenFileName(self, "open fie", "D:\College\College Year 3 (Junior)\DSP\Task 4\Face_Morphing\Images", "All Files (*)" )
+        img=Image()
+        filename = QtWidgets.QFileDialog.getOpenFileName()
+        img.path = filename[0]
         # self.path
-
         # self.label = self.findChild(Qlabel, "Qlabel")
-
-        original_image = QImage(fname[0])
+        original_image = QImage(img.path)
         grayscale_image = original_image.convertToFormat(QImage.Format_Grayscale8)
-        
         self.pixmap = QPixmap.fromImage(grayscale_image)
         Qlabel.setPixmap(self.pixmap)
 
-        # self.raw_data = plt.imread(self.path)
-        # self.raw_data = self.raw_data.astype('float32')
-        # self.raw_data /= 255
-
-
-        # # Get size
-        # self.shape = self.raw_data.shape
-        # self.width = self.shape[0]
-        # self.height = self.shape[1]
+        raw_data = plt.imread(img.path)
+        raw_data = raw_data.astype('float32')
+        raw_data /= 255
+        img.raw_data=raw_data
+        # Get size
+        img.shape = img.raw_data.shape
+        img.width = img.shape[0]
+        img.height = img.shape[1]
         
         # # Fourier FFT
-        # self.fft = np.fft.fft2(self.raw_data)
+        img.fft = np.fft.fft2(img.raw_data)
         # # Get magnitude
-        # self.magnitude = np.abs(self.fft)
+        img.magnitude = np.abs(img.fft)
         # # Get phase
-        # self.phase = np.angle(self.fft)
+        img.phase = np.angle(img.fft)
         # # Get real
-        # self.real = np.real(self.fft)
+        img.real = np.real(img.fft)
         # # Get imag
-        # self.imaginary = np.imag(self.fft)
+        img.imaginary = np.imag(img.fft)
+        Images.append(img)
+        print(len(Images)) ############### need to create remove image function to update length of images array
 
