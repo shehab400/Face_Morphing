@@ -21,14 +21,30 @@ class MyWindow(QMainWindow):
         # self.ui.setupUi(self)
         self.setWindowTitle('Fourier Transform Mixer')
         self.ui.applyButton.clicked.connect(self.open_output_window)
-        self.ui.fixedImage1.mousePressEvent = lambda event: self.removeImage(1,self.ui.fixedImage1)
-        self.ui.fixedImage2.mousePressEvent = lambda event: self.removeImage(2,self.ui.fixedImage2)
-        self.ui.fixedImage3.mousePressEvent = lambda event: self.removeImage(3,self.ui.fixedImage3)
-        self.ui.fixedImage4.mousePressEvent = lambda event: self.removeImage(4,self.ui.fixedImage4)
+        self.ui.fixedImage1.wheelEvent = lambda event: self.removeImage(1,self.ui.fixedImage1)
+        self.ui.fixedImage2.wheelEvent = lambda event: self.removeImage(2,self.ui.fixedImage2)
+        self.ui.fixedImage3.wheelEvent = lambda event: self.removeImage(3,self.ui.fixedImage3)
+        self.ui.fixedImage4.wheelEvent = lambda event: self.removeImage(4,self.ui.fixedImage4)
         self.ui.fixedImage1.mouseDoubleClickEvent =lambda event: self.imageDisplay(self.ui.fixedImage1,1)
         self.ui.fixedImage2.mouseDoubleClickEvent =lambda event: self.imageDisplay(self.ui.fixedImage2,2)
         self.ui.fixedImage3.mouseDoubleClickEvent =lambda event: self.imageDisplay(self.ui.fixedImage3,3)
         self.ui.fixedImage4.mouseDoubleClickEvent =lambda event: self.imageDisplay(self.ui.fixedImage4,4)
+        self.ui.comboBox_1.addItem("Magnitude")
+        self.ui.comboBox_1.addItem("Phase")
+        self.ui.comboBox_1.addItem("Real")
+        self.ui.comboBox_1.addItem("Imaginary")
+        self.ui.comboBox_2.addItem("Magnitude")
+        self.ui.comboBox_2.addItem("Phase")
+        self.ui.comboBox_2.addItem("Real")
+        self.ui.comboBox_2.addItem("Imaginary")
+        self.ui.comboBox_3.addItem("Magnitude")
+        self.ui.comboBox_3.addItem("Phase")
+        self.ui.comboBox_3.addItem("Real")
+        self.ui.comboBox_3.addItem("Imaginary")
+        self.ui.comboBox_4.addItem("Magnitude")
+        self.ui.comboBox_4.addItem("Phase")
+        self.ui.comboBox_4.addItem("Real")
+        self.ui.comboBox_4.addItem("Imaginary")
 
     def open_output_window(self):
         global count
@@ -40,6 +56,11 @@ class MyWindow(QMainWindow):
             count = 1 
         else: 
             count = 0
+            pass
+
+    def chooseMood_1(self):
+        Index = self.comboBox.currentIndex()
+        if Index == 1:
             pass
 
     def imageDisplay(self , Qlabel,imglabel):
@@ -74,7 +95,7 @@ class MyWindow(QMainWindow):
         # # Get imag
         img.imaginary = np.imag(img.fft)
         Images.append(img)
-        print(len(Images)) ############### need to create remove image function to update length of images array
+        print(len(Images)) # need to create remove image function to update length of images array
 
     def removeImage(self,imglabel,Qlabel):
         if imglabel==0:
