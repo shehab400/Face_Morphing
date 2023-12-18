@@ -21,10 +21,14 @@ class MyWindow(QMainWindow):
         # self.ui.setupUi(self)
         self.setWindowTitle('Fourier Transform Mixer')
         self.ui.applyButton.clicked.connect(self.open_output_window)
-        self.ui.fixedImage1.mouseDoubleClickEvent =lambda event: self.imageDisplay(self.ui.fixedImage1)
-        self.ui.fixedImage2.mouseDoubleClickEvent =lambda event: self.imageDisplay(self.ui.fixedImage2)
-        self.ui.fixedImage3.mouseDoubleClickEvent =lambda event: self.imageDisplay(self.ui.fixedImage3)
-        self.ui.fixedImage4.mouseDoubleClickEvent =lambda event: self.imageDisplay(self.ui.fixedImage4)
+        self.ui.fixedImage1.mousePressEvent = lambda event: self.removeImage(1,self.ui.fixedImage1)
+        self.ui.fixedImage2.mousePressEvent = lambda event: self.removeImage(2,self.ui.fixedImage2)
+        self.ui.fixedImage3.mousePressEvent = lambda event: self.removeImage(3,self.ui.fixedImage3)
+        self.ui.fixedImage4.mousePressEvent = lambda event: self.removeImage(4,self.ui.fixedImage4)
+        self.ui.fixedImage1.mouseDoubleClickEvent =lambda event: self.imageDisplay(self.ui.fixedImage1,1)
+        self.ui.fixedImage2.mouseDoubleClickEvent =lambda event: self.imageDisplay(self.ui.fixedImage2,2)
+        self.ui.fixedImage3.mouseDoubleClickEvent =lambda event: self.imageDisplay(self.ui.fixedImage3,3)
+        self.ui.fixedImage4.mouseDoubleClickEvent =lambda event: self.imageDisplay(self.ui.fixedImage4,4)
 
     def open_output_window(self):
         global count
@@ -38,8 +42,9 @@ class MyWindow(QMainWindow):
             count = 0
             pass
 
-    def imageDisplay(self , Qlabel):
+    def imageDisplay(self , Qlabel,imglabel):
         img=Image()
+        img.imagelabel=imglabel
         filename = QtWidgets.QFileDialog.getOpenFileName()
         img.path = filename[0]
         # self.path
@@ -71,3 +76,13 @@ class MyWindow(QMainWindow):
         Images.append(img)
         print(len(Images)) ############### need to create remove image function to update length of images array
 
+    def removeImage(self,imglabel,Qlabel):
+        if imglabel==0:
+            return
+        else:
+            for index, image in enumerate(Images):
+              if image.imagelabel ==imglabel :
+                 Qlabel.clear()
+                 Images.pop(index)
+                 print(len(Images))
+            

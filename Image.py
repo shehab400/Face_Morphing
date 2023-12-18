@@ -2,7 +2,7 @@ class Image:
     def __init__(self):
         self.path = ""
         self.raw_data = None
-                    
+        self.imagelabel=0            
         # Get size
         self.shape = None
         self.width = 0
