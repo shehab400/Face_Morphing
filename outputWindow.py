@@ -11,6 +11,4 @@ class OutputWindow(QMainWindow):
     def __init__(self):
         super(OutputWindow, self).__init__()
         self.ui = uic.loadUi("window2.ui", self)
-        # self.ui = Ui_MainWindow()
-        # self.ui.setupUi(self)
         self.setWindowTitle('Output Screen')
