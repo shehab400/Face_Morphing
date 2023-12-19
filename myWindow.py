@@ -18,8 +18,6 @@ class MyWindow(QMainWindow):
     def __init__(self):
         super(MyWindow, self).__init__()
         self.ui = uic.loadUi("GUI.ui", self)
-        # self.ui = Ui_MainWindow()
-        # self.ui.setupUi(self)
         self.setWindowTitle('Fourier Transform Mixer')
         self.ui.applyButton.clicked.connect(self.open_output_window)
         self.ui.comboBox_1.currentTextChanged.connect(lambda: self.updatingComboBox(self.ui.comboBox_1,1))
@@ -34,38 +32,12 @@ class MyWindow(QMainWindow):
         self.ui.fixedImage2.mouseDoubleClickEvent =lambda event: self.imageDisplay(self.ui.fixedImage2,self.ui.changedImage2,self.ui.comboBox_2,2)
         self.ui.fixedImage3.mouseDoubleClickEvent =lambda event: self.imageDisplay(self.ui.fixedImage3,self.ui.changedImage3,self.ui.comboBox_3,3)
         self.ui.fixedImage4.mouseDoubleClickEvent =lambda event: self.imageDisplay(self.ui.fixedImage4,self.ui.changedImage4,self.ui.comboBox_4,4)
-        self.ui.comboBox_1.addItem("Magnitude")
-        self.ui.comboBox_1.addItem("Phase")
-        self.ui.comboBox_1.addItem("Real")
-        self.ui.comboBox_1.addItem("Imaginary")
-        self.ui.comboBox_2.addItem("Magnitude")
-        self.ui.comboBox_2.addItem("Phase")
-        self.ui.comboBox_2.addItem("Real")
-        self.ui.comboBox_2.addItem("Imaginary")
-        self.ui.comboBox_3.addItem("Magnitude")
-        self.ui.comboBox_3.addItem("Phase")
-        self.ui.comboBox_3.addItem("Real")
-        self.ui.comboBox_3.addItem("Imaginary")
-        self.ui.comboBox_4.addItem("Magnitude")
-        self.ui.comboBox_4.addItem("Phase")
-        self.ui.comboBox_4.addItem("Real")
-        self.ui.comboBox_4.addItem("Imaginary")
-        # self.ui.comboBox_5.addItem("Imaginary")
-        # self.ui.comboBox_5.addItem("Magnitude")
-        # self.ui.comboBox_5.addItem("Phase")
-        # self.ui.comboBox_5.addItem("Real")
-        # self.ui.comboBox_6.addItem("Magnitude")
-        # self.ui.comboBox_6.addItem("Phase")
-        # self.ui.comboBox_6.addItem("Real")
-        # self.ui.comboBox_6.addItem("Imaginary")
-        # self.ui.comboBox_8.addItem("Magnitude")
-        # self.ui.comboBox_7.addItem("Phase")
-        # self.ui.comboBox_7.addItem("Real")
-        # self.ui.comboBox_7.addItem("Imaginary")
-        # self.ui.comboBox_8.addItem("Magnitude")
-        # self.ui.comboBox_8.addItem("Phase")
-        # self.ui.comboBox_8.addItem("Real")
-        # self.ui.comboBox_8.addItem("Imaginary")
+        for combo in [self.ui.comboBox_1,self.ui.comboBox_2,self.ui.comboBox_3,self.ui.comboBox_4]:
+            combo.addItem("Magnitude")
+            combo.addItem("Phase")
+            combo.addItem("Real")
+            combo.addItem("Imaginary")
+
     def open_output_window(self):
         global count
         # Create a new instance of the output window
@@ -76,11 +48,6 @@ class MyWindow(QMainWindow):
             count = 1 
         else: 
             count = 0
-            pass
-
-    def chooseMood_1(self):
-        Index = self.comboBox.currentIndex()
-        if Index == 1:
             pass
 
     def imageDisplay(self,Qlabel,Qlabel2,QComboBox,imglabel):
@@ -118,6 +85,7 @@ class MyWindow(QMainWindow):
         print(len(Images)) # need to create remove image function to update length of images array
         self.setMode()
         self.plottingChosenComponents(img,QComboBox.currentText(),Qlabel2)
+
     def removeImage(self,imglabel,Qlabel,Qlabel2):
         if imglabel==0:
             return
@@ -137,6 +105,7 @@ class MyWindow(QMainWindow):
        if   self.ui.comboBox.currentText() in ["Magnitude", "Phase"]  and self.ui.comboBox_5.currentText() in ["Magnitude", "Phase"] and self.ui.comboBox_6.currentText() in ["Magnitude", "Phase"] and self.ui.comboBox_7.currentText() in ["Magnitude", "Phase"]:
            mode= 'mag-phase'
            print(mode)
+
     def plottingChosenComponents(self,img,component,Qlabel):
         if component in ["Magnitude"] :
             magnitude_spectrum = img.magnitude
@@ -158,6 +127,7 @@ class MyWindow(QMainWindow):
             grayscale_image = QImage('test.png').convertToFormat(QImage.Format_Grayscale8) 
 
         Qlabel.setPixmap(QPixmap(grayscale_image))
+
     def updatingComboBox(self,QComboBox,flag):
         if len(Images)>0:
             if flag==1:
