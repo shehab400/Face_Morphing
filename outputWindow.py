@@ -12,3 +12,5 @@ class OutputWindow(QMainWindow):
         super(OutputWindow, self).__init__()
         self.ui = uic.loadUi("window2.ui", self)
         self.setWindowTitle('Output Screen')
+    def addimage(self,Qlabel):
+        pass

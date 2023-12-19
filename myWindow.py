@@ -6,9 +6,11 @@ from pyqtgraph import PlotWidget, plot
 from PyQt5.QtWidgets import QApplication,QMainWindow,QVBoxLayout,QPushButton,QWidget,QErrorMessage,QMessageBox,QDialog,QScrollBar,QSlider, QFileDialog ,QGraphicsView, QGraphicsScene, QGraphicsRectItem, QGraphicsPixmapItem, QVBoxLayout, QWidget, QPushButton, QColorDialog
 import sys
 import matplotlib.pyplot as plt
-from outputWindow import OutputWindow
 import numpy as np
 from Image import *
+from matplotlib.colors import Normalize
+
+from outputWindow import *
 count = 0
 
 Images=[]
@@ -37,9 +39,16 @@ class MyWindow(QMainWindow):
         self.ui.fixedImage1.mouseDoubleClickEvent =lambda event: self.imageDisplay(self.ui.fixedImage1,self.ui.changedImage1,self.ui.comboBox_1,1)
         self.ui.fixedImage2.mouseDoubleClickEvent =lambda event: self.imageDisplay(self.ui.fixedImage2,self.ui.changedImage2,self.ui.comboBox_2,2)
         self.ui.fixedImage3.mouseDoubleClickEvent =lambda event: self.imageDisplay(self.ui.fixedImage3,self.ui.changedImage3,self.ui.comboBox_3,3)
-        self.ui.fixedImage4.mouseDoubleClickEvent =lambda event: self.imageDisplay(self.ui.fixedImage4,self.ui.changedImage4,self.ui.comboBox_4,4)
+
+        for combo in [self.ui.comboBox_1,self.ui.comboBox_2,self.ui.comboBox_3,self.ui.comboBox_4]:
+            combo.addItems(["Magnitude","Phase","Real","Imaginary"])
+       
+        for slider in [self.ui.horizontalSlider,self.ui.horizontalSlider_2,self.ui.horizontalSlider_3,self.ui.horizontalSlider_4]:
+             slider.valueChanged.connect(lambda value, mode=mode: self.mixing(value))
+
         self.Inner_radio.toggled.connect(self.select_region)
         self.Outer_radio.toggled.connect(self.select_region)
+
 
 
     def open_output_window(self):
@@ -133,10 +142,10 @@ class MyWindow(QMainWindow):
     
     def setMode(self):
        global mode
-       if  self.ui.comboBox.currentText() in ["Real", "Imaginary"] and self.ui.comboBox_5.currentText() in ["Real", "Imaginary"] and self.ui.comboBox_6.currentText() in ["Real", "Imaginary"] and self.ui.comboBox_7.currentText() in ["Real", "Imaginary"]:
+       if  self.ui.comboBox_1.currentText() in ["Real", "Imaginary"] and self.ui.comboBox_2.currentText() in ["Real", "Imaginary"] and self.ui.comboBox_3.currentText() in ["Real", "Imaginary"] and self.ui.comboBox_4.currentText() in ["Real", "Imaginary"]:
            mode= 'real-imag' 
            print(mode)
-       if   self.ui.comboBox.currentText() in ["Magnitude", "Phase"]  and self.ui.comboBox_5.currentText() in ["Magnitude", "Phase"] and self.ui.comboBox_6.currentText() in ["Magnitude", "Phase"] and self.ui.comboBox_7.currentText() in ["Magnitude", "Phase"]:
+       if   self.ui.comboBox_1.currentText() in ["Magnitude", "Phase"]  and self.ui.comboBox_2.currentText() in ["Magnitude", "Phase"] and self.ui.comboBox_3.currentText() in ["Magnitude", "Phase"] and self.ui.comboBox_4.currentText() in ["Magnitude", "Phase"]:
            mode= 'mag-phase'
            print(mode)
 
@@ -192,4 +201,109 @@ class MyWindow(QMainWindow):
             if flag==4:
                 label=self.ui.changedImage4
                 img=Images[3]
+                component=QComboBox.currentText()
                 self.plottingChosenComponents(img,component,label)
+                
+    def chooseComponent(self, type, ratio,img):
+        if type == "Magnitude":
+            return img.magnitude * ratio
+        elif type == "Phase":
+            return np.exp(1j * img.phase* ratio)
+        elif type == "Real":
+            return img.real * ratio
+        elif type == "Imaginary":
+            return (1j* img.imaginary)* ratio 
+        
+        
+        
+    def mixing(self,value):
+      ratio1=self.ui.horizontalSlider.value()/100
+      ratio2=self.ui.horizontalSlider_2.value()/100
+      ratio3=self.ui.horizontalSlider_3.value()/100
+      ratio4=self.ui.horizontalSlider_4.value()/100
+      self.setMode()
+      global mode
+      print(mode)
+      if(len(Images)>0):
+        # firstcomponent=self.chooseComponent(type1,ratio1,Images[0])
+        # secoundcomponent=self.chooseComponent(type2,ratio2,Images[1])
+        # thirdcomponent=self.chooseComponent(type3,ratio3,Images[2])
+        # fourthcomponent=self.chooseComponent(type4,ratio4,Images[3])
+        if(mode=='mag-phase'):
+        
+            mixed_magnitude = np.zeros_like(Images[0].magnitude,np.float64)
+            mixed_phase = np.ones_like(Images[0].phase,dtype=np.complex128)
+            if self.ui.comboBox_1.currentText()=="Magnitude":
+                mixed_magnitude =Images[0].magnitude * ratio1
+            else:
+                mixed_phase = np.exp(1j * Images[0].phase)* ratio1
+
+            if  self.ui.comboBox_2.currentText()=="Magnitude":
+                mixed_magnitude +=Images[1].magnitude * ratio2
+            else:
+                mixed_phase += np.exp(1j * Images[1].phase)* ratio2
+
+            if self.ui.comboBox_3.currentText()=="Magnitude":
+                mixed_magnitude +=Images[2].magnitude * ratio3
+            else:
+                mixed_phase +=np.exp(1j * Images[2].phase)*ratio3
+
+            if self.ui.comboBox_4.currentText()=="Magnitude":
+               mixed_magnitude +=Images[3].magnitude * ratio4
+            else:
+               mixed_phase+= np.exp(1j * Images[3].phase)* ratio4
+            if np.max(np.angle(mixed_phase)) == 0:
+                
+                avg_mixed_image = (mixed_magnitude)
+                # normalized=(avg_mixed_image-np.min(avg_mixed_image))/(np.max(avg_mixed_image)-np.min(avg_mixed_image))
+                final_mixed_image = np.fft.ifft2(avg_mixed_image)
+            elif(np.max(mixed_magnitude==0)):
+                avg_mixed_image = (mixed_phase)
+                # normalized=(avg_mixed_image-np.min(avg_mixed_image))/(np.max(avg_mixed_image)-np.min(avg_mixed_image))
+                final_mixed_image = np.fft.ifft2(avg_mixed_image)
+            else:
+                avg_mixed_image = (mixed_magnitude *  mixed_phase)
+                # normalized=(avg_mixed_image-np.min(avg_mixed_image))/(np.max(avg_mixed_image)-np.min(avg_mixed_image))
+                final_mixed_image = np.fft.ifft2(avg_mixed_image)
+            if (np.max(final_mixed_image)>1):
+                final_mixed_image=final_mixed_image/np.max(final_mixed_image)
+            plt.imsave('test1.png',np.abs(final_mixed_image) , cmap='gray')
+            # grayscale_image = QImage('test1.png').convertToFormat(QImage.Format_Grayscale8) 
+            
+                        
+        elif(mode=='real-imag'):
+            
+            mixed_imaginary= np.zeros_like(Images[0].imaginary)
+            mixed_real = np.ones_like(Images[0].real)
+            if self.ui.comboBox_1.currentText()=="real":
+                 mixed_real =Images[0].real * ratio1
+            else:
+                mixed_imaginary =(1j* Images[0].imaginary)* ratio1
+
+            if  self.ui.comboBox_2.currentText()=="real":
+                 mixed_real +=Images[1].real * ratio2
+            else:
+                mixed_imaginary += (1j* Images[1].imaginary)* ratio2
+
+            if self.ui.comboBox_3.currentText()=="real":
+                 mixed_real +=Images[2].real * ratio3
+            else:
+                mixed_imaginary +=(1j* Images[2].imaginary)* ratio3
+
+            if self.ui.comboBox_4.currentText()=="real":
+                 mixed_real +=Images[3].real * ratio4
+            else:
+                mixed_imaginary+=(1j* Images[3].imaginary)* ratio4
+            
+                
+            avg_mixed_image = ( mixed_real + mixed_imaginary)
+            # normalized=(avg_mixed_image-np.min(avg_mixed_image))/(np.max(avg_mixed_image)-np.min(avg_mixed_image))
+            final_mixed_image = np.fft.ifft2(avg_mixed_image)
+          
+            if (np.max(final_mixed_image)>1):
+                final_mixed_image=final_mixed_image/np.max(final_mixed_image)
+            plt.imsave('test2.png',np.abs(final_mixed_image) , cmap='gray')
+            # grayscale_image = QImage('test1.png').convertToFormat(QImage.Format_Grayscale8)
+
+                self.plottingChosenComponents(img,component,label)
+
