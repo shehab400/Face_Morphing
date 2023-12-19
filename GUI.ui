@@ -159,14 +159,14 @@
             </property>
             <layout class="QHBoxLayout" name="horizontalLayout_7">
              <item>
-              <widget class="QRadioButton" name="radioButton_3">
+              <widget class="QRadioButton" name="Inner_radio">
                <property name="text">
                 <string>Inner Region</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QRadioButton" name="radioButton_4">
+              <widget class="QRadioButton" name="Outer_radio">
                <property name="text">
                 <string>Outer Region</string>
                </property>
