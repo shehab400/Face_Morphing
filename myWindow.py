@@ -33,10 +33,7 @@ class MyWindow(QMainWindow):
         self.ui.fixedImage3.mouseDoubleClickEvent =lambda event: self.imageDisplay(self.ui.fixedImage3,self.ui.changedImage3,self.ui.comboBox_3,3)
         self.ui.fixedImage4.mouseDoubleClickEvent =lambda event: self.imageDisplay(self.ui.fixedImage4,self.ui.changedImage4,self.ui.comboBox_4,4)
         for combo in [self.ui.comboBox_1,self.ui.comboBox_2,self.ui.comboBox_3,self.ui.comboBox_4]:
-            combo.addItem("Magnitude")
-            combo.addItem("Phase")
-            combo.addItem("Real")
-            combo.addItem("Imaginary")
+            combo.addItems(["Magnitude","Phase","Real","Imaginary"])
 
     def open_output_window(self):
         global count
@@ -129,25 +126,30 @@ class MyWindow(QMainWindow):
         Qlabel.setPixmap(QPixmap(grayscale_image))
 
     def updatingComboBox(self,QComboBox,flag):
+        component=QComboBox.currentText()
+        if flag == 1:
+            if component in ["Magnitude","Phase"]:
+                for combo in [self.ui.comboBox_2,self.ui.comboBox_3,self.ui.comboBox_4]:
+                    combo.clear()
+                    combo.addItems(["Magnitude","Phase"])
+            else:
+                for combo in [self.ui.comboBox_2,self.ui.comboBox_3,self.ui.comboBox_4]:
+                    combo.clear()
+                    combo.addItems(["Real","Imaginary"])
         if len(Images)>0:
             if flag==1:
                 label=self.ui.changedImage1
                 img=Images[0]
-                component=QComboBox.currentText()
-                self.plottingChosenComponents(img,component,label)
-        
+                self.plottingChosenComponents(img,component,label)        
             if flag==2:
                 label=self.ui.changedImage2
                 img=Images[1]
-                component=QComboBox.currentText()
                 self.plottingChosenComponents(img,component,label)
             if flag==3:
                 label=self.ui.changedImage3
                 img=Images[2]
-                component=QComboBox.currentText()
                 self.plottingChosenComponents(img,component,label)
             if flag==4:
                 label=self.ui.changedImage4
                 img=Images[3]
-                component=QComboBox.currentText()
                 self.plottingChosenComponents(img,component,label)
