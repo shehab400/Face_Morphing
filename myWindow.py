@@ -1,9 +1,9 @@
 from PyQt5 import QtWidgets, uic, QtCore,QtGui
-from PyQt5.QtCore import QThread,QObject,pyqtSignal as Signal, pyqtSlot as Slot
+from PyQt5.QtCore import QThread,QObject,pyqtSignal as Signal, pyqtSlot as Slot,  Qt
 import pyqtgraph as pg
-from PyQt5.QtGui import QPixmap , QImage
+from PyQt5.QtGui import QPixmap , QImage, QColor, QPainter, QBrush
 from pyqtgraph import PlotWidget, plot
-from PyQt5.QtWidgets import QApplication,QMainWindow,QVBoxLayout,QPushButton,QWidget,QErrorMessage,QMessageBox,QDialog,QScrollBar,QSlider, QFileDialog
+from PyQt5.QtWidgets import QApplication,QMainWindow,QVBoxLayout,QPushButton,QWidget,QErrorMessage,QMessageBox,QDialog,QScrollBar,QSlider, QFileDialog ,QGraphicsView, QGraphicsScene, QGraphicsRectItem, QGraphicsPixmapItem, QVBoxLayout, QWidget, QPushButton, QColorDialog
 import sys
 import matplotlib.pyplot as plt
 from outputWindow import OutputWindow
@@ -12,6 +12,7 @@ from Image import *
 count = 0
 
 Images=[]
+filteredImages = []
 mode=""
 class MyWindow(QMainWindow):
 
@@ -20,6 +21,11 @@ class MyWindow(QMainWindow):
         self.ui = uic.loadUi("GUI.ui", self)
         self.setWindowTitle('Fourier Transform Mixer')
         self.ui.applyButton.clicked.connect(self.open_output_window)
+        self.rect_items = []
+        self.overlay_color = QColor(255, 0, 0, 100)
+        for combo in [self.ui.comboBox_1,self.ui.comboBox_2,self.ui.comboBox_3,self.ui.comboBox_4]:
+            combo.addItems(["Magnitude","Phase","Real","Imaginary"])
+        self.updatingComboBox(self.ui.comboBox_1,1)   
         self.ui.comboBox_1.currentTextChanged.connect(lambda: self.updatingComboBox(self.ui.comboBox_1,1))
         self.ui.comboBox_2.currentTextChanged.connect(lambda: self.updatingComboBox(self.ui.comboBox_2,2))
         self.ui.comboBox_3.currentTextChanged.connect(lambda: self.updatingComboBox(self.ui.comboBox_3,3))
@@ -32,8 +38,9 @@ class MyWindow(QMainWindow):
         self.ui.fixedImage2.mouseDoubleClickEvent =lambda event: self.imageDisplay(self.ui.fixedImage2,self.ui.changedImage2,self.ui.comboBox_2,2)
         self.ui.fixedImage3.mouseDoubleClickEvent =lambda event: self.imageDisplay(self.ui.fixedImage3,self.ui.changedImage3,self.ui.comboBox_3,3)
         self.ui.fixedImage4.mouseDoubleClickEvent =lambda event: self.imageDisplay(self.ui.fixedImage4,self.ui.changedImage4,self.ui.comboBox_4,4)
-        for combo in [self.ui.comboBox_1,self.ui.comboBox_2,self.ui.comboBox_3,self.ui.comboBox_4]:
-            combo.addItems(["Magnitude","Phase","Real","Imaginary"])
+        self.Inner_radio.toggled.connect(self.select_region)
+        self.Outer_radio.toggled.connect(self.select_region)
+
 
     def open_output_window(self):
         global count
@@ -93,7 +100,37 @@ class MyWindow(QMainWindow):
                  Qlabel2.clear()
                  Images.pop(index)
                  print(len(Images))
+    
+    def select_region(self):
+        if self.Inner_radio.isChecked():
+            self.add_rectangle(inner=True)
+        elif self.Outer_radio.isChecked():
+            self.add_rectangle(inner=False)
+
+    # def add_rectangle(self, Qlabel, inner=True):
+    #     for img in filteredImages:
+    #         # Get image dimensions
+    #         width = img.width()
+    #         height = img.height()
+
+    #         # Create a QPainter to draw on the image
+    #         painter = QPainter(img)
+    #         painter.setCompositionMode(QPainter.CompositionMode_SourceOver)
+
+    #         # Define a transparent color for highlighting
+    #         highlight_color = QColor(255, 0, 0, 128)  # Red with 50% transparency
+
+    #         if inner:
+    #             # Highlight the inner half of the image
+    #             painter.fillRect(0, 0, width / 2, height, highlight_color)
+    #         else  :
+    #             # Highlight the outer half of the image
+    #             painter.fillRect(width / 2, 0, width / 2, height, highlight_color)
+
+    #         painter.end()
             
+    #         Qlabel.changedImage1.setPixmap(QPixmap(img))
+    
     def setMode(self):
        global mode
        if  self.ui.comboBox.currentText() in ["Real", "Imaginary"] and self.ui.comboBox_5.currentText() in ["Real", "Imaginary"] and self.ui.comboBox_6.currentText() in ["Real", "Imaginary"] and self.ui.comboBox_7.currentText() in ["Real", "Imaginary"]:
@@ -110,19 +147,22 @@ class MyWindow(QMainWindow):
             magnitude_spectrum_normalized = (magnitude_spectrum_log - np.min(magnitude_spectrum_log)) / (np.max(magnitude_spectrum_log) - np.min(magnitude_spectrum_log))
             plt.imsave('test.png', magnitude_spectrum_normalized, cmap='gray')
             grayscale_image = QImage('test.png').convertToFormat(QImage.Format_Grayscale8)
+            filteredImages.append(grayscale_image)
         if component in ["Real"] :
             real_part_normalized = (img.real - np.min(img.real)) / (np.max(img.real) - np.min(img.real))
             plt.imsave('test.png',real_part_normalized , cmap='gray')
             grayscale_image = QImage('test.png').convertToFormat(QImage.Format_Grayscale8)
+            filteredImages.append(grayscale_image)
         if component in ["Phase"] :
             phase_part_normalized = (img.phase - np.min(img.phase)) / (np.max(img.phase) - np.min(img.phase))
             plt.imsave('test.png',phase_part_normalized , cmap='gray')
             grayscale_image = QImage('test.png').convertToFormat(QImage.Format_Grayscale8)
+            filteredImages.append(grayscale_image)
         if component in ["Imaginary"] :
             imaginary_part_normalized = (img.imaginary - np.min(img.imaginary)) / (np.max(img.imaginary) - np.min(img.imaginary))
             plt.imsave('test.png',imaginary_part_normalized , cmap='gray')
             grayscale_image = QImage('test.png').convertToFormat(QImage.Format_Grayscale8) 
-
+            filteredImages.append(grayscale_image)
         Qlabel.setPixmap(QPixmap(grayscale_image))
 
     def updatingComboBox(self,QComboBox,flag):
