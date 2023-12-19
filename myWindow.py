@@ -39,15 +39,15 @@ class MyWindow(QMainWindow):
         self.ui.fixedImage1.mouseDoubleClickEvent =lambda event: self.imageDisplay(self.ui.fixedImage1,self.ui.changedImage1,self.ui.comboBox_1,1)
         self.ui.fixedImage2.mouseDoubleClickEvent =lambda event: self.imageDisplay(self.ui.fixedImage2,self.ui.changedImage2,self.ui.comboBox_2,2)
         self.ui.fixedImage3.mouseDoubleClickEvent =lambda event: self.imageDisplay(self.ui.fixedImage3,self.ui.changedImage3,self.ui.comboBox_3,3)
+        self.ui.fixedImage4.mouseDoubleClickEvent =lambda event: self.imageDisplay(self.ui.fixedImage4,self.ui.changedImage4,self.ui.comboBox_4,4)
 
-        for combo in [self.ui.comboBox_1,self.ui.comboBox_2,self.ui.comboBox_3,self.ui.comboBox_4]:
-            combo.addItems(["Magnitude","Phase","Real","Imaginary"])
-       
         for slider in [self.ui.horizontalSlider,self.ui.horizontalSlider_2,self.ui.horizontalSlider_3,self.ui.horizontalSlider_4]:
              slider.valueChanged.connect(lambda value, mode=mode: self.mixing(value))
 
-        self.Inner_radio.toggled.connect(self.select_region)
-        self.Outer_radio.toggled.connect(self.select_region)
+        self.radioButton.toggled.connect(self.whichoutput)
+        self.radioButton_2.toggled.connect(self.whichoutput)
+
+        self.output = 0
 
 
 
@@ -116,6 +116,12 @@ class MyWindow(QMainWindow):
         elif self.Outer_radio.isChecked():
             self.add_rectangle(inner=False)
 
+    def whichoutput(self):
+        if self.radioButton.isChecked():
+            self.output=1
+        if self.radioButton_2.isChecked():
+           self.output = 2
+            
     # def add_rectangle(self, Qlabel, inner=True):
     #     for img in filteredImages:
     #         # Get image dimensions
@@ -269,6 +275,8 @@ class MyWindow(QMainWindow):
                 final_mixed_image=final_mixed_image/np.max(final_mixed_image)
             plt.imsave('test1.png',np.abs(final_mixed_image) , cmap='gray')
             # grayscale_image = QImage('test1.png').convertToFormat(QImage.Format_Grayscale8) 
+            grayscale_image = QImage('test1.png').convertToFormat(QImage.Format_Grayscale8)
+            self.output_window.addimage(self.output,grayscale_image)
             
                         
         elif(mode=='real-imag'):
@@ -303,6 +311,9 @@ class MyWindow(QMainWindow):
             if (np.max(final_mixed_image)>1):
                 final_mixed_image=final_mixed_image/np.max(final_mixed_image)
             plt.imsave('test2.png',np.abs(final_mixed_image) , cmap='gray')
+            grayscale_image = QImage('test2.png').convertToFormat(QImage.Format_Grayscale8)
+            
+            self.output_window.addimage(self.output,grayscale_image)
             # grayscale_image = QImage('test1.png').convertToFormat(QImage.Format_Grayscale8)
 
 
