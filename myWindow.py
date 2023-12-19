@@ -305,5 +305,4 @@ class MyWindow(QMainWindow):
             plt.imsave('test2.png',np.abs(final_mixed_image) , cmap='gray')
             # grayscale_image = QImage('test1.png').convertToFormat(QImage.Format_Grayscale8)
 
-                self.plottingChosenComponents(img,component,label)
 
