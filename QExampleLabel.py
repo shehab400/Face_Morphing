@@ -8,21 +8,33 @@ from PyQt5.QtCore import QRect
 class QExampleLabel (QLabel):
     def __init__(self, parentQWidget = None):
         super(QExampleLabel, self).__init__(parentQWidget)
-        self.initUI()
+        self.isCropable = False
 
-    def initUI (self):
-        self.setPixmap(QPixmap('1.png'))
+    def setImage (self,pixmap):
+        self.setPixmap(pixmap)
+
+    def removeImage(self):
+        QLabel.clear()
+
+    def setIsCropable(self,bool):
+        self.isCropable = bool
 
     def mousePressEvent (self, eventQMouseEvent):
+        if self.isCropable == False:
+            return
         self.originQPoint = eventQMouseEvent.pos()
         self.currentQRubberBand = QRubberBand(QRubberBand.Rectangle, self)
         self.currentQRubberBand.setGeometry(QRect(self.originQPoint, QtCore.QSize()))
         self.currentQRubberBand.show()
 
     def mouseMoveEvent (self, eventQMouseEvent):
+        if self.isCropable == False:
+            return
         self.currentQRubberBand.setGeometry(QRect(self.originQPoint, eventQMouseEvent.pos()).normalized())
 
     def mouseReleaseEvent (self, eventQMouseEvent):
+        if self.isCropable == False:
+            return
         self.currentQRubberBand.hide()
         currentQRect = self.currentQRubberBand.geometry()
         self.currentQRubberBand.deleteLater()
