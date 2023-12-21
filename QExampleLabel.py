@@ -9,6 +9,7 @@ class QExampleLabel (QLabel):
     def __init__(self, parentQWidget = None):
         super(QExampleLabel, self).__init__(parentQWidget)
         self.isCropable = False
+        self.currentQRubberBand = None
 
     def setImage (self,pixmap):
         self.setPixmap(pixmap)
@@ -22,6 +23,8 @@ class QExampleLabel (QLabel):
     def mousePressEvent (self, eventQMouseEvent):
         if self.isCropable == False:
             return
+        if self.currentQRubberBand != None:
+            self.currentQRubberBand.hide()
         self.originQPoint = eventQMouseEvent.pos()
         self.currentQRubberBand = QRubberBand(QRubberBand.Rectangle, self)
         self.currentQRubberBand.setGeometry(QRect(self.originQPoint, QtCore.QSize()))
@@ -35,9 +38,7 @@ class QExampleLabel (QLabel):
     def mouseReleaseEvent (self, eventQMouseEvent):
         if self.isCropable == False:
             return
-        self.currentQRubberBand.hide()
         currentQRect = self.currentQRubberBand.geometry()
-        self.currentQRubberBand.deleteLater()
         cropQPixmap = self.pixmap().copy(currentQRect)
         cropQPixmap.save('output.png')
 
