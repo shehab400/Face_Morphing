@@ -44,7 +44,6 @@ class MyWindow(QMainWindow):
         self.ui.widget_8.layout().addWidget(self.changed4)
         self.ui.radioButton.setChecked(True)
         self.ui.Inner_radio.setChecked(True)
-        self.rect_items = []
         self.overlay_color = QColor(255, 0, 0, 100)
         for combo in [self.ui.comboBox_1,self.ui.comboBox_2,self.ui.comboBox_3,self.ui.comboBox_4]:
             combo.addItems(["Magnitude","Phase","Real","Imaginary"])
