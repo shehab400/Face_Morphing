@@ -1,16 +1,17 @@
 from PyQt5 import QtWidgets, uic, QtCore,QtGui
-from PyQt5.QtCore import QThread,QObject,pyqtSignal as Signal, pyqtSlot as Slot,  Qt
+from PyQt5.QtCore import QThread,QObject,pyqtSignal as Signal, pyqtSlot as Slot,  Qt,QRect
 import pyqtgraph as pg
 from PyQt5.QtGui import QPixmap , QImage, QColor, QPainter, QBrush
 from pyqtgraph import PlotWidget, plot
-from PyQt5.QtWidgets import QApplication,QMainWindow,QVBoxLayout,QPushButton,QWidget,QErrorMessage,QMessageBox,QDialog,QScrollBar,QSlider, QFileDialog ,QGraphicsView, QGraphicsScene, QGraphicsRectItem, QGraphicsPixmapItem, QVBoxLayout, QWidget, QPushButton, QColorDialog
+from PyQt5.QtWidgets import QRubberBand,QApplication,QMainWindow,QVBoxLayout,QPushButton,QWidget,QErrorMessage,QMessageBox,QDialog,QScrollBar,QSlider, QFileDialog ,QGraphicsView, QGraphicsScene, QGraphicsRectItem, QGraphicsPixmapItem, QVBoxLayout, QWidget, QPushButton, QColorDialog
 import sys
 import matplotlib.pyplot as plt
 import numpy as np
 from Image import *
 from matplotlib.colors import Normalize
-
+from QExampleLabel import *
 from outputWindow import *
+
 count = 0
 
 Images=[]
@@ -22,8 +23,27 @@ class MyWindow(QMainWindow):
         super(MyWindow, self).__init__()
         self.ui = uic.loadUi("GUI.ui", self)
         self.setWindowTitle('Fourier Transform Mixer')
+        self.fixed1 = QExampleLabel(self)
+        self.fixed2 = QExampleLabel(self)
+        self.fixed3 = QExampleLabel(self)
+        self.fixed4 = QExampleLabel(self)
+        self.changed1 = QExampleLabel(self)
+        self.changed2 = QExampleLabel(self)
+        self.changed3 = QExampleLabel(self)
+        self.changed4 = QExampleLabel(self)
+        self.changed1.setIsCropable(True)
+        self.output_window = OutputWindow()
         self.ui.applyButton.clicked.connect(self.open_output_window)
-        self.rect_items = []
+        self.ui.widget.layout().addWidget(self.fixed1)
+        self.ui.widget_2.layout().addWidget(self.fixed2)
+        self.ui.widget_3.layout().addWidget(self.fixed3)
+        self.ui.widget_4.layout().addWidget(self.fixed4)
+        self.ui.widget_5.layout().addWidget(self.changed1)
+        self.ui.widget_6.layout().addWidget(self.changed2)
+        self.ui.widget_7.layout().addWidget(self.changed3)
+        self.ui.widget_8.layout().addWidget(self.changed4)
+        self.ui.radioButton.setChecked(True)
+        self.ui.Inner_radio.setChecked(True)
         self.overlay_color = QColor(255, 0, 0, 100)
         for combo in [self.ui.comboBox_1,self.ui.comboBox_2,self.ui.comboBox_3,self.ui.comboBox_4]:
             combo.addItems(["Magnitude","Phase","Real","Imaginary"])
@@ -32,22 +52,23 @@ class MyWindow(QMainWindow):
         self.ui.comboBox_2.currentTextChanged.connect(lambda: self.updatingComboBox(self.ui.comboBox_2,2))
         self.ui.comboBox_3.currentTextChanged.connect(lambda: self.updatingComboBox(self.ui.comboBox_3,3))
         self.ui.comboBox_4.currentTextChanged.connect(lambda: self.updatingComboBox(self.ui.comboBox_4,4))
-        self.ui.fixedImage1.mousePressEvent  = lambda event: self.removeImage(1,self.ui.fixedImage1,self.ui.changedImage1)
-        self.ui.fixedImage2.mousePressEvent  = lambda event: self.removeImage(2,self.ui.fixedImage2,self.ui.changedImage2)
-        self.ui.fixedImage3.mousePressEvent  = lambda event: self.removeImage(3,self.ui.fixedImage3,self.ui.changedImage3)
-        self.ui.fixedImage4.mousePressEvent  = lambda event: self.removeImage(4,self.ui.fixedImage4,self.ui.changedImage4)
-        self.ui.fixedImage1.mouseDoubleClickEvent =lambda event: self.imageDisplay(self.ui.fixedImage1,self.ui.changedImage1,self.ui.comboBox_1,1)
-        self.ui.fixedImage2.mouseDoubleClickEvent =lambda event: self.imageDisplay(self.ui.fixedImage2,self.ui.changedImage2,self.ui.comboBox_2,2)
-        self.ui.fixedImage3.mouseDoubleClickEvent =lambda event: self.imageDisplay(self.ui.fixedImage3,self.ui.changedImage3,self.ui.comboBox_3,3)
-        self.ui.fixedImage4.mouseDoubleClickEvent =lambda event: self.imageDisplay(self.ui.fixedImage4,self.ui.changedImage4,self.ui.comboBox_4,4)
+        # self.ui.fixedImage1.mousePressEvent  = lambda event: self.removeImage(1,self.ui.fixedImage1,self.ui.changedImage1)
+        # self.ui.fixedImage2.mousePressEvent  = lambda event: self.removeImage(2,self.ui.fixedImage2,self.ui.changedImage2)
+        # self.ui.fixedImage3.mousePressEvent  = lambda event: self.removeImage(3,self.ui.fixedImage3,self.ui.changedImage3)
+        # self.ui.fixedImage4.mousePressEvent  = lambda event: self.removeImage(4,self.ui.fixedImage4,self.ui.changedImage4)
+        #self.fixed1.mousePressEvent = lambda event: self.mousePressEvent(self.ui.fixedImage1)
 
-        for slider in [self.ui.horizontalSlider,self.ui.horizontalSlider_2,self.ui.horizontalSlider_3,self.ui.horizontalSlider_4]:
-             slider.valueChanged.connect(lambda value, mode=mode: self.mixing(value))
+        self.ui.widget.mouseDoubleClickEvent =lambda event: self.imageDisplay(self.fixed1,self.changed1,self.ui.comboBox_1,1)
+        self.ui.widget_2.mouseDoubleClickEvent =lambda event: self.imageDisplay(self.fixed2,self.changed2,self.ui.comboBox_2,2)
+        self.ui.widget_3.mouseDoubleClickEvent =lambda event: self.imageDisplay(self.fixed3,self.changed3,self.ui.comboBox_3,3)
+        self.ui.widget_4.mouseDoubleClickEvent =lambda event: self.imageDisplay(self.fixed4,self.changed4,self.ui.comboBox_4,4)
 
+        # for slider in [self.ui.horizontalSlider,self.ui.horizontalSlider_2,self.ui.horizontalSlider_3,self.ui.horizontalSlider_4]:
+        #      slider.valueChanged.connect(lambda value, mode=mode: self.mixing(value))
         self.radioButton.toggled.connect(self.whichoutput)
         self.radioButton_2.toggled.connect(self.whichoutput)
 
-        self.output = 0
+        self.output = 1
 
 
 
@@ -55,13 +76,26 @@ class MyWindow(QMainWindow):
         global count
         # Create a new instance of the output window
         if count == 0:
-            self.output_window = OutputWindow()
             # Show the output window
+            self.mixing()
             self.output_window.show()
             count = 1 
         else: 
             count = 0
             pass
+
+    # def mousePressEvent(self,Qlabel):
+    #     Qlabel.
+
+    # def mouseMoveEvent (self, eventQMouseEvent):
+    #     self.ui.fixedImage1.currentQRubberBand.setGeometry(QRect(self.ui.fixedImage1.originQPoint, eventQMouseEvent.pos()).normalized())
+        
+    # def mouseReleaseEvent (self, eventQMouseEvent):
+    #     self.ui.fixedImage1.currentQRubberBand.hide()
+    #     currentQRect = self.ui.fixedImage1.currentQRubberBand.geometry()
+    #     self.ui.fixedImage1.currentQRubberBand.deleteLater()
+    #     cropQPixmap = self.ui.fixedImage1.pixmap().copy(currentQRect)
+    #     cropQPixmap.save('output.png')
 
     def imageDisplay(self,Qlabel,Qlabel2,QComboBox,imglabel):
         img=Image()
@@ -73,7 +107,7 @@ class MyWindow(QMainWindow):
         original_image = QImage(img.path)
         grayscale_image = original_image.convertToFormat(QImage.Format_Grayscale8)
         self.pixmap = QPixmap.fromImage(grayscale_image)
-        Qlabel.setPixmap(self.pixmap)
+        Qlabel.setImage(self.pixmap)
 
         raw_data = plt.imread(img.path)
         raw_data = raw_data.astype('float32')
@@ -178,7 +212,7 @@ class MyWindow(QMainWindow):
             plt.imsave('test.png',imaginary_part_normalized , cmap='gray')
             grayscale_image = QImage('test.png').convertToFormat(QImage.Format_Grayscale8) 
             filteredImages.append(grayscale_image)
-        Qlabel.setPixmap(QPixmap(grayscale_image))
+        Qlabel.setImage(QPixmap(grayscale_image))
 
     def updatingComboBox(self,QComboBox,flag):
         component=QComboBox.currentText()
@@ -193,21 +227,20 @@ class MyWindow(QMainWindow):
                     combo.addItems(["Real","Imaginary"])
         if len(Images)>0:
             if flag==1:
-                label=self.ui.changedImage1
+                label=self.changed1
                 img=Images[0]
                 self.plottingChosenComponents(img,component,label)        
             if flag==2:
-                label=self.ui.changedImage2
+                label=self.changed2
                 img=Images[1]
                 self.plottingChosenComponents(img,component,label)
             if flag==3:
-                label=self.ui.changedImage3
+                label=self.changed3
                 img=Images[2]
                 self.plottingChosenComponents(img,component,label)
             if flag==4:
-                label=self.ui.changedImage4
+                label=self.changed4
                 img=Images[3]
-                component=QComboBox.currentText()
                 self.plottingChosenComponents(img,component,label)
                 
     def chooseComponent(self, type, ratio,img):
@@ -222,7 +255,7 @@ class MyWindow(QMainWindow):
         
         
         
-    def mixing(self,value):
+    def mixing(self):
       ratio1=self.ui.horizontalSlider.value()/100
       ratio2=self.ui.horizontalSlider_2.value()/100
       ratio3=self.ui.horizontalSlider_3.value()/100
