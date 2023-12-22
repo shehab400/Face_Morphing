@@ -55,9 +55,9 @@ class MyWindow(QMainWindow):
         self.ui.widget_6.layout().addWidget(self.changed2)
         self.ui.widget_7.layout().addWidget(self.changed3)
         self.ui.widget_8.layout().addWidget(self.changed4)
-        self.Rect = None
         self.ui.radioButton.setChecked(True)
         self.ui.Inner_radio.setChecked(True)
+        self.isInner = True
         self.overlay_color = QColor(255, 0, 0, 100)
         for combo in [self.ui.comboBox_1,self.ui.comboBox_2,self.ui.comboBox_3,self.ui.comboBox_4]:
             combo.addItems(["Magnitude","Phase","Real","Imaginary"])
@@ -81,6 +81,9 @@ class MyWindow(QMainWindow):
         #      slider.valueChanged.connect(lambda value, mode=mode: self.mixing(value))
         self.radioButton.toggled.connect(self.whichoutput)
         self.radioButton_2.toggled.connect(self.whichoutput)
+        self.Inner_radio.toggled.connect(self.select_region)
+        self.Outer_radio.toggled.connect(self.select_region)
+
 
         self.output = 1
 
@@ -172,9 +175,9 @@ class MyWindow(QMainWindow):
     
     def select_region(self):
         if self.Inner_radio.isChecked():
-            self.add_rectangle(inner=True)
+            self.isInner = True
         elif self.Outer_radio.isChecked():
-            self.add_rectangle(inner=False)
+            self.isInner = False
 
     def whichoutput(self):
         if self.radioButton.isChecked():
@@ -288,22 +291,36 @@ class MyWindow(QMainWindow):
       ratio3=self.ui.horizontalSlider_3.value()/100
       ratio4=self.ui.horizontalSlider_4.value()/100
       Rect = self.changed1.Rect
-      if Images[0].type!=0:
-        self.changed1.getCropped(Rect)
-        img,pixmap,grayscale_image = self.imageInitializer('output1.png',1)
-        self.croppedImages[0]=img
-      if Images[1].type!=0:
-        self.changed2.getCropped(Rect)
-        img,pixmap,grayscale_image = self.imageInitializer('output2.png',2)
-        self.croppedImages[1]=img
-      if Images[2].type!=0:
-        self.changed3.getCropped(Rect)
-        img,pixmap,grayscale_image = self.imageInitializer('output3.png',3)
-        self.croppedImages[2]=img
-      if Images[3].type!=0:
-        self.changed4.getCropped(Rect)
-        img,pixmap,grayscale_image = self.imageInitializer('output4.png',4)
-        self.croppedImages[3]=img
+
+      if self.isInner == True:
+        if Images[0].type!=0:
+            self.changed1.getCropped(Rect)
+            img,pixmap,grayscale_image = self.imageInitializer('output1.png',1)
+            self.croppedImages[0]=img
+        if Images[1].type!=0:
+            self.changed2.getCropped(Rect)
+            img,pixmap,grayscale_image = self.imageInitializer('output2.png',2)
+            self.croppedImages[1]=img
+        if Images[2].type!=0:
+            self.changed3.getCropped(Rect)
+            img,pixmap,grayscale_image = self.imageInitializer('output3.png',3)
+            self.croppedImages[2]=img
+        if Images[3].type!=0:
+            self.changed4.getCropped(Rect)
+            img,pixmap,grayscale_image = self.imageInitializer('output4.png',4)
+            self.croppedImages[3]=img
+      elif self.isInner == False:
+        if Rect == QRect(QPoint(0,0),QtCore.QSize()):
+            pass
+        else:
+            if Images[0].type!=0:
+                self.changed1.getCropped(Rect)
+            if Images[1].type!=0:
+                pass
+            if Images[2].type!=0:
+                pass
+            if Images[3].type!=0:
+                pass
 
       self.setMode()
       global mode
