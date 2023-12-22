@@ -15,6 +15,18 @@ from outputWindow import *
 count = 0
 
 Images=[]
+image1=Image()
+image1.type=0
+image2=Image()
+image2.type=0
+image3=Image()
+image3.type=0
+image4=Image()
+image4.type=0
+Images.append(image1)
+Images.append(image2)
+Images.append(image3)
+Images.append(image4)
 filteredImages = []
 mode=""
 class MyWindow(QMainWindow):
@@ -58,10 +70,10 @@ class MyWindow(QMainWindow):
         # self.ui.fixedImage4.mousePressEvent  = lambda event: self.removeImage(4,self.ui.fixedImage4,self.ui.changedImage4)
         #self.fixed1.mousePressEvent = lambda event: self.mousePressEvent(self.ui.fixedImage1)
 
-        self.ui.widget.mouseDoubleClickEvent =lambda event: self.imageDisplay(self.fixed1,self.changed1,self.ui.comboBox_1,1)
-        self.ui.widget_2.mouseDoubleClickEvent =lambda event: self.imageDisplay(self.fixed2,self.changed2,self.ui.comboBox_2,2)
-        self.ui.widget_3.mouseDoubleClickEvent =lambda event: self.imageDisplay(self.fixed3,self.changed3,self.ui.comboBox_3,3)
-        self.ui.widget_4.mouseDoubleClickEvent =lambda event: self.imageDisplay(self.fixed4,self.changed4,self.ui.comboBox_4,4)
+        self.ui.fixedImage1.mouseDoubleClickEvent =lambda event: self.imageDisplay(self.fixed1,self.changed1,self.ui.comboBox_1,1)
+        self.ui.fixedImage2.mouseDoubleClickEvent =lambda event: self.imageDisplay(self.fixed2,self.changed2,self.ui.comboBox_2,2)
+        self.ui.fixedImage3.mouseDoubleClickEvent =lambda event: self.imageDisplay(self.fixed3,self.changed3,self.ui.comboBox_3,3)
+        self.ui.fixedImage4.mouseDoubleClickEvent =lambda event: self.imageDisplay(self.fixed4,self.changed4,self.ui.comboBox_4,4)
 
         # for slider in [self.ui.horizontalSlider,self.ui.horizontalSlider_2,self.ui.horizontalSlider_3,self.ui.horizontalSlider_4]:
         #      slider.valueChanged.connect(lambda value, mode=mode: self.mixing(value))
@@ -128,8 +140,20 @@ class MyWindow(QMainWindow):
         img.real = np.real(img.fft)
         # # Get imag
         img.imaginary = np.imag(img.fft)
-        Images.append(img)
-        print(len(Images)) # need to create remove image function to update length of images array
+        if img.imagelabel==1:
+            Images[0]=img
+            print(Images[0].imagelabel)
+        elif img.imagelabel==2:
+            Images[1]=img
+            print(Images[1].imagelabel)
+        elif img.imagelabel==3: 
+            Images[2]=img
+            print(Images[2].imagelabel)
+        elif img.imagelabel==4:
+            Images[3]=img
+            print(Images[3].imagelabel)
+       
+        # print(len(Images)) # need to create remove image function to update length of images array
         self.setMode()
         self.plottingChosenComponents(img,QComboBox.currentText(),Qlabel2)
 
@@ -225,7 +249,7 @@ class MyWindow(QMainWindow):
                 for combo in [self.ui.comboBox_2,self.ui.comboBox_3,self.ui.comboBox_4]:
                     combo.clear()
                     combo.addItems(["Real","Imaginary"])
-        if len(Images)>0:
+        if Images[0].type!=0:
             if flag==1:
                 label=self.changed1
                 img=Images[0]
