@@ -15,10 +15,10 @@ class OutputWindow(QMainWindow):
         self.setWindowTitle('Output Screen')
 
     def addimage(self,key,QImage):
-        self.ui.output_1.clear()
-        self.ui.output_2.clear()
         if key == 1:
+            self.ui.output_1.clear()
             self.ui.output_1.setPixmap(QPixmap(QImage))
         elif key == 2:
+            self.ui.output_2.clear()
             self.ui.output_2.setPixmap(QPixmap(QImage))
             

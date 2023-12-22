@@ -27,8 +27,7 @@ Images.append(image1)
 Images.append(image2)
 Images.append(image3)
 Images.append(image4)
-filteredImages = []
-croppedImages = []
+filteredImages = Images.copy()
 mode=""
 class MyWindow(QMainWindow):
 
@@ -36,14 +35,15 @@ class MyWindow(QMainWindow):
         super(MyWindow, self).__init__()
         self.ui = uic.loadUi("GUI.ui", self)
         self.setWindowTitle('Fourier Transform Mixer')
-        self.fixed1 = QExampleLabel(self)
-        self.fixed2 = QExampleLabel(self)
-        self.fixed3 = QExampleLabel(self)
-        self.fixed4 = QExampleLabel(self)
-        self.changed1 = QExampleLabel(self)
-        self.changed2 = QExampleLabel(self)
-        self.changed3 = QExampleLabel(self)
-        self.changed4 = QExampleLabel(self)
+        self.croppedImages = []
+        self.fixed1 = QExampleLabel(self,1)
+        self.fixed2 = QExampleLabel(self,2)
+        self.fixed3 = QExampleLabel(self,3)
+        self.fixed4 = QExampleLabel(self,4)
+        self.changed1 = QExampleLabel(self,1)
+        self.changed2 = QExampleLabel(self,2)
+        self.changed3 = QExampleLabel(self,3)
+        self.changed4 = QExampleLabel(self,4)
         self.changed1.setIsCropable(True)
         self.output_window = OutputWindow()
         self.ui.applyButton.clicked.connect(self.open_output_window)
@@ -111,17 +111,15 @@ class MyWindow(QMainWindow):
     #     cropQPixmap = self.ui.fixedImage1.pixmap().copy(currentQRect)
     #     cropQPixmap.save('output.png')
 
-    def imageDisplay(self,Qlabel,Qlabel2,QComboBox,imglabel):
-        img=Image()
+    def imageInitializer(self,path,imglabel):
+        img = Image()
         img.imagelabel=imglabel
-        filename = QtWidgets.QFileDialog.getOpenFileName()
-        img.path = filename[0]
+        img.path = path
         # self.path
         # self.label = self.findChild(Qlabel, "Qlabel")
         original_image = QImage(img.path)
         grayscale_image = original_image.convertToFormat(QImage.Format_Grayscale8)
         self.pixmap = QPixmap.fromImage(grayscale_image)
-        Qlabel.setImage(self.pixmap)
 
         raw_data = plt.imread(img.path)
         raw_data = raw_data.astype('float32')
@@ -142,21 +140,20 @@ class MyWindow(QMainWindow):
         img.real = np.real(img.fft)
         # # Get imag
         img.imaginary = np.imag(img.fft)
-        if img.imagelabel==1:
-            Images[0]=img
-            print(Images[0].imagelabel)
-        elif img.imagelabel==2:
-            Images[1]=img
-            print(Images[1].imagelabel)
-        elif img.imagelabel==3: 
-            Images[2]=img
-            print(Images[2].imagelabel)
-        elif img.imagelabel==4:
-            Images[3]=img
-            print(Images[3].imagelabel)
+        
+        return img,self.pixmap,grayscale_image
+
+    def imageDisplay(self,Qlabel,Qlabel2,QComboBox,imglabel):
+        filename = QtWidgets.QFileDialog.getOpenFileName()
+        path = filename[0]
+        img,self.pixmap,grayscale_image = self.imageInitializer(path,imglabel)
+        Qlabel.setImage(self.pixmap,grayscale_image)
+
+        Images[img.imagelabel-1] = img
+        print(img.imagelabel)
 
         # print(len(Images)) # need to create remove image function to update length of images array
-        croppedImages = Images.copy()
+        self.croppedImages = Images.copy()
         for changed in [self.changed1,self.changed2,self.changed3,self.changed4]:
             changed.resetRubberBand()
         self.setMode()
@@ -219,29 +216,30 @@ class MyWindow(QMainWindow):
            print(mode)
 
     def plottingChosenComponents(self,img,component,Qlabel):
+        global grayscale_image
         if component in ["Magnitude"] :
             magnitude_spectrum = img.magnitude
             magnitude_spectrum_log = np.log1p(magnitude_spectrum)
             magnitude_spectrum_normalized = (magnitude_spectrum_log - np.min(magnitude_spectrum_log)) / (np.max(magnitude_spectrum_log) - np.min(magnitude_spectrum_log))
             plt.imsave('test.png', magnitude_spectrum_normalized, cmap='gray')
             grayscale_image = QImage('test.png').convertToFormat(QImage.Format_Grayscale8)
-            filteredImages.append(grayscale_image)
+            filteredImages[img.imagelabel-1] = grayscale_image
         if component in ["Real"] :
             real_part_normalized = (img.real - np.min(img.real)) / (np.max(img.real) - np.min(img.real))
             plt.imsave('test.png',real_part_normalized , cmap='gray')
             grayscale_image = QImage('test.png').convertToFormat(QImage.Format_Grayscale8)
-            filteredImages.append(grayscale_image)
+            filteredImages[img.imagelabel-1] = grayscale_image
         if component in ["Phase"] :
             phase_part_normalized = (img.phase - np.min(img.phase)) / (np.max(img.phase) - np.min(img.phase))
             plt.imsave('test.png',phase_part_normalized , cmap='gray')
             grayscale_image = QImage('test.png').convertToFormat(QImage.Format_Grayscale8)
-            filteredImages.append(grayscale_image)
+            filteredImages[img.imagelabel-1] = grayscale_image
         if component in ["Imaginary"] :
             imaginary_part_normalized = (img.imaginary - np.min(img.imaginary)) / (np.max(img.imaginary) - np.min(img.imaginary))
             plt.imsave('test.png',imaginary_part_normalized , cmap='gray')
             grayscale_image = QImage('test.png').convertToFormat(QImage.Format_Grayscale8) 
-            filteredImages.append(grayscale_image)
-        Qlabel.setImage(QPixmap(grayscale_image))
+            filteredImages[img.imagelabel-1] = grayscale_image
+        Qlabel.setImage(QPixmap(grayscale_image),grayscale_image)
 
     def updatingComboBox(self,QComboBox,flag):
         component=QComboBox.currentText()
@@ -254,7 +252,7 @@ class MyWindow(QMainWindow):
                 for combo in [self.ui.comboBox_2,self.ui.comboBox_3,self.ui.comboBox_4]:
                     combo.clear()
                     combo.addItems(["Real","Imaginary"])
-        if Images[0].type!=0:
+        if Images[flag-1].type!=0:
             if flag==1:
                 label=self.changed1
                 img=Images[0]
@@ -289,37 +287,55 @@ class MyWindow(QMainWindow):
       ratio2=self.ui.horizontalSlider_2.value()/100
       ratio3=self.ui.horizontalSlider_3.value()/100
       ratio4=self.ui.horizontalSlider_4.value()/100
+      Rect = self.changed1.Rect
+      if Images[0].type!=0:
+        self.changed1.getCropped(Rect)
+        img,pixmap,grayscale_image = self.imageInitializer('output1.png',1)
+        self.croppedImages[0]=img
+      if Images[1].type!=0:
+        self.changed2.getCropped(Rect)
+        img,pixmap,grayscale_image = self.imageInitializer('output2.png',2)
+        self.croppedImages[1]=img
+      if Images[2].type!=0:
+        self.changed3.getCropped(Rect)
+        img,pixmap,grayscale_image = self.imageInitializer('output3.png',3)
+        self.croppedImages[2]=img
+      if Images[3].type!=0:
+        self.changed4.getCropped(Rect)
+        img,pixmap,grayscale_image = self.imageInitializer('output4.png',4)
+        self.croppedImages[3]=img
+
       self.setMode()
       global mode
       print(mode)
-      if(len(Images)>0):
+      if all(img.type != 0 for img in Images):
         # firstcomponent=self.chooseComponent(type1,ratio1,Images[0])
         # secoundcomponent=self.chooseComponent(type2,ratio2,Images[1])
         # thirdcomponent=self.chooseComponent(type3,ratio3,Images[2])
         # fourthcomponent=self.chooseComponent(type4,ratio4,Images[3])
         if(mode=='mag-phase'):
         
-            mixed_magnitude = np.zeros_like(croppedImages[0].magnitude,np.float64)
-            mixed_phase = np.ones_like(croppedImages[0].phase,dtype=np.complex128)
+            mixed_magnitude = np.zeros_like(self.croppedImages[0].magnitude,np.float64)
+            mixed_phase = np.ones_like(self.croppedImages[0].phase,dtype=np.complex128)
             if self.ui.comboBox_1.currentText()=="Magnitude":
-                mixed_magnitude =croppedImages[0].magnitude * ratio1
+                mixed_magnitude =self.croppedImages[0].magnitude * ratio1
             else:
-                mixed_phase = np.exp(1j * croppedImages[0].phase)* ratio1
+                mixed_phase = np.exp(1j * self.croppedImages[0].phase)* ratio1
 
             if  self.ui.comboBox_2.currentText()=="Magnitude":
-                mixed_magnitude +=croppedImages[1].magnitude * ratio2
+                mixed_magnitude +=self.croppedImages[1].magnitude * ratio2
             else:
-                mixed_phase += np.exp(1j * croppedImages[1].phase)* ratio2
+                mixed_phase += np.exp(1j * self.croppedImages[1].phase)* ratio2
 
             if self.ui.comboBox_3.currentText()=="Magnitude":
-                mixed_magnitude +=croppedImages[2].magnitude * ratio3
+                mixed_magnitude +=self.croppedImages[2].magnitude * ratio3
             else:
-                mixed_phase +=np.exp(1j * croppedImages[2].phase)*ratio3
+                mixed_phase +=np.exp(1j * self.croppedImages[2].phase)*ratio3
 
             if self.ui.comboBox_4.currentText()=="Magnitude":
-               mixed_magnitude +=croppedImages[3].magnitude * ratio4
+               mixed_magnitude +=self.croppedImages[3].magnitude * ratio4
             else:
-               mixed_phase+= np.exp(1j * croppedImages[3].phase)* ratio4
+               mixed_phase+= np.exp(1j * self.croppedImages[3].phase)* ratio4
             if np.max(np.angle(mixed_phase)) == 0:
                 
                 avg_mixed_image = (mixed_magnitude)
@@ -342,27 +358,27 @@ class MyWindow(QMainWindow):
                         
         elif(mode=='real-imag'):
             
-            mixed_imaginary= np.zeros_like(croppedImages[0].imaginary)
-            mixed_real = np.ones_like(croppedImages[0].real)
+            mixed_imaginary= np.zeros_like(self.croppedImages[0].imaginary)
+            mixed_real = np.ones_like(self.croppedImages[0].real)
             if self.ui.comboBox_1.currentText()=="real":
-                 mixed_real =croppedImages[0].real * ratio1
+                 mixed_real =self.croppedImages[0].real * ratio1
             else:
-                mixed_imaginary =(1j* croppedImages[0].imaginary)* ratio1
+                mixed_imaginary =(1j* self.croppedImages[0].imaginary)* ratio1
 
             if  self.ui.comboBox_2.currentText()=="real":
-                 mixed_real +=croppedImages[1].real * ratio2
+                 mixed_real +=self.croppedImages[1].real * ratio2
             else:
-                mixed_imaginary += (1j* croppedImages[1].imaginary)* ratio2
+                mixed_imaginary += (1j* self.croppedImages[1].imaginary)* ratio2
 
             if self.ui.comboBox_3.currentText()=="real":
-                 mixed_real +=croppedImages[2].real * ratio3
+                 mixed_real +=self.croppedImages[2].real * ratio3
             else:
-                mixed_imaginary +=(1j* croppedImages[2].imaginary)* ratio3
+                mixed_imaginary +=(1j* self.croppedImages[2].imaginary)* ratio3
 
             if self.ui.comboBox_4.currentText()=="real":
-                 mixed_real +=croppedImages[3].real * ratio4
+                 mixed_real +=self.croppedImages[3].real * ratio4
             else:
-                mixed_imaginary+=(1j* croppedImages[3].imaginary)* ratio4
+                mixed_imaginary+=(1j* self.croppedImages[3].imaginary)* ratio4
             
                 
             avg_mixed_image = ( mixed_real + mixed_imaginary)
