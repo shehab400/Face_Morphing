@@ -86,6 +86,7 @@ class MyWindow(QMainWindow):
 
 
         self.output = 1
+        self.BC = None
 
 
 
@@ -178,37 +179,19 @@ class MyWindow(QMainWindow):
             self.isInner = True
         elif self.Outer_radio.isChecked():
             self.isInner = False
+            
+    def selectBC(self):
+        if self.brightness_radio.isChecked():
+            self.BC = 1
+        if self.contrast_radio.isChecked():
+            self.BC = 2
 
     def whichoutput(self):
         if self.radioButton.isChecked():
-            self.output=1
+            self.output = 1
         if self.radioButton_2.isChecked():
            self.output = 2
             
-    # def add_rectangle(self, Qlabel, inner=True):
-    #     for img in filteredImages:
-    #         # Get image dimensions
-    #         width = img.width()
-    #         height = img.height()
-
-    #         # Create a QPainter to draw on the image
-    #         painter = QPainter(img)
-    #         painter.setCompositionMode(QPainter.CompositionMode_SourceOver)
-
-    #         # Define a transparent color for highlighting
-    #         highlight_color = QColor(255, 0, 0, 128)  # Red with 50% transparency
-
-    #         if inner:
-    #             # Highlight the inner half of the image
-    #             painter.fillRect(0, 0, width / 2, height, highlight_color)
-    #         else  :
-    #             # Highlight the outer half of the image
-    #             painter.fillRect(width / 2, 0, width / 2, height, highlight_color)
-
-    #         painter.end()
-            
-    #         Qlabel.changedImage1.setPixmap(QPixmap(img))
-    
     def setMode(self):
        global mode
        if  self.ui.comboBox_1.currentText() in ["Real", "Imaginary"] and self.ui.comboBox_2.currentText() in ["Real", "Imaginary"] and self.ui.comboBox_3.currentText() in ["Real", "Imaginary"] and self.ui.comboBox_4.currentText() in ["Real", "Imaginary"]:
@@ -282,9 +265,7 @@ class MyWindow(QMainWindow):
             return img.real * ratio
         elif type == "Imaginary":
             return (1j* img.imaginary)* ratio 
-        
-        
-        
+          
     def mixing(self):
       ratio1=self.ui.horizontalSlider.value()/100
       ratio2=self.ui.horizontalSlider_2.value()/100

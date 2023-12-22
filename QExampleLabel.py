@@ -3,7 +3,8 @@ from PyQt5 import QtGui, QtCore,QtWidgets
 from PyQt5.QtWidgets import QRubberBand, QLabel, QApplication, QWidget
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import QRect,QPoint
-
+import cv2
+import numpy as np
 
 class QExampleLabel (QLabel):
     def __init__(self, parentQWidget = None,flag = 0):
@@ -13,6 +14,8 @@ class QExampleLabel (QLabel):
         self.croppedPixmap = None
         self.img = None
         self.flag = flag
+        self.contrasted = 0
+        self.brightned = 0
         self.Rect = QRect(QPoint(0,0),QtCore.QSize())
 
     def setImage (self,pixmap,img):
@@ -60,6 +63,10 @@ class QExampleLabel (QLabel):
         cropped = self.pixmap().copy(QRect)
         cropped.save('output'+str(self.flag)+'.png')
         return cropped
+
+    def changBC(self):
+        BCimage = cv2.addWeighted(self.img, self.contrasted, np.zeros(self.img.shape, self.img.dtype), self.brightned , 50)
+
 
 if __name__ == '__main__':
     myQApplication = QApplication(sys.argv)
