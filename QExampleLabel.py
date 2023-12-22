@@ -2,18 +2,21 @@ import sys
 from PyQt5 import QtGui, QtCore,QtWidgets
 from PyQt5.QtWidgets import QRubberBand, QLabel, QApplication, QWidget
 from PyQt5.QtGui import QPixmap
-from PyQt5.QtCore import QRect
+from PyQt5.QtCore import QRect,QPoint
 
 
 class QExampleLabel (QLabel):
-    def __init__(self, parentQWidget = None):
+    def __init__(self, parentQWidget = None,flag = 0):
         super(QExampleLabel, self).__init__(parentQWidget)
         self.isCropable = False
         self.currentQRubberBand = None
         self.croppedPixmap = None
-        self.Rect = None
+        self.img = None
+        self.flag = flag
+        self.Rect = QRect(QPoint(0,0),QtCore.QSize())
 
-    def setImage (self,pixmap):
+    def setImage (self,pixmap,img):
+        self.img = img
         self.setPixmap(pixmap)
         self.croppedPixmap = pixmap
 
@@ -27,7 +30,7 @@ class QExampleLabel (QLabel):
         if self.currentQRubberBand != None:
             self.currentQRubberBand.hide()
         self.currentQRubberBand = None
-        self.Rect = None
+        self.Rect = QRect(QPoint(0,0),QtCore.QSize())
 
     def mousePressEvent (self, eventQMouseEvent):
         if self.isCropable == False:
@@ -52,6 +55,11 @@ class QExampleLabel (QLabel):
         cropQPixmap = self.pixmap().copy(currentQRect)
         self.croppedPixmap = cropQPixmap
         #cropQPixmap.save('output.png')
+
+    def getCropped(self,QRect):
+        cropped = self.pixmap().copy(QRect)
+        cropped.save('output'+str(self.flag)+'.png')
+        return cropped
 
 if __name__ == '__main__':
     myQApplication = QApplication(sys.argv)
