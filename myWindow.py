@@ -81,6 +81,9 @@ class MyWindow(QMainWindow):
         self.ui.comboBox_2.currentTextChanged.connect(lambda: self.updatingComboBox(self.ui.comboBox_2,2))
         self.ui.comboBox_3.currentTextChanged.connect(lambda: self.updatingComboBox(self.ui.comboBox_3,3))
         self.ui.comboBox_4.currentTextChanged.connect(lambda: self.updatingComboBox(self.ui.comboBox_4,4))
+        for slider in [self.ui.horizontalSlider,self.ui.horizontalSlider_2,self.ui.horizontalSlider_3,self.horizontalSlider_4]:
+            slider.valueChanged.connect(self.UpdateLabels)
+        self.UpdateLabels()
         # self.ui.widget.mousePressEvent  = lambda event: self.removeImage(1,self.fixed1,self.changed1)
         # self.ui.widget_2.mousePressEvent  = lambda event: self.removeImage(2,self.fixed2,self.changed2)
         # self.ui.widget_3.mousePressEvent  = lambda event: self.removeImage(3,self.fixed3,self.changed3)
@@ -130,6 +133,12 @@ class MyWindow(QMainWindow):
     #     self.ui.fixedImage1.currentQRubberBand.deleteLater()
     #     cropQPixmap = self.ui.fixedImage1.pixmap().copy(currentQRect)
     #     cropQPixmap.save('output.png')
+
+    def UpdateLabels(self):
+        self.ui.label_6.setText(str(self.ui.horizontalSlider.value()))
+        self.ui.label_7.setText(str(self.ui.horizontalSlider_2.value()))
+        self.ui.label_8.setText(str(self.ui.horizontalSlider_3.value()))
+        self.ui.label_9.setText(str(self.ui.horizontalSlider_4.value()))
 
     def imageInitializer(self,path,imglabel):
         img = Image()
