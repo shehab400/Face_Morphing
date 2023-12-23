@@ -11,6 +11,8 @@ from Image import *
 from matplotlib.colors import Normalize
 from QExampleLabel import *
 from outputWindow import *
+import time
+from Worker import *
 
 count = 0
 
@@ -30,6 +32,8 @@ Images.append(image4)
 filteredImages = Images.copy()
 mode=""
 class MyWindow(QMainWindow):
+    work_start = Signal(int)
+    work_requested = Signal(int)
 
     def __init__(self):
         super(MyWindow, self).__init__()
@@ -60,6 +64,15 @@ class MyWindow(QMainWindow):
         self.ui.radioButton.setChecked(True)
         self.ui.Inner_radio.setChecked(True)
         self.ui.brightness_radio.setChecked(True)
+
+        self.worker = Worker()
+        self.worker_thread = QThread()
+        self.worker.start.connect(self.mixing)
+        self.worker.progress.connect(self.UpdateProgressBar)
+        self.work_start.connect(self.worker.do_work)
+        self.work_requested.connect(self.worker.working)
+        self.worker.moveToThread(self.worker_thread)
+        self.worker_thread.start()
 
         self.isInner = True
         self.overlay_color = QColor(255, 0, 0, 100)
@@ -99,14 +112,12 @@ class MyWindow(QMainWindow):
     def open_output_window(self):
         global count
         # Create a new instance of the output window
-        if count == 0:
             # Show the output window
-            self.mixing()
-            self.output_window.show()
-            count = 1 
-        else: 
-            count = 0
-            pass
+        self.output_window.ui.progressBar.setValue(0)
+        self.output_window.show()
+        count = 1 
+        self.worker.end = False
+        self.work_start.emit(25)
 
     # def mousePressEvent(self,Qlabel):
     #     Qlabel.
@@ -286,6 +297,7 @@ class MyWindow(QMainWindow):
         ratio3=self.ui.horizontalSlider_3.value()/100
         ratio4=self.ui.horizontalSlider_4.value()/100
         Rect = self.changed1.Rect
+        self.work_requested.emit(25)
         if Rect == QRect(QPoint(0,0),QtCore.QSize()):
             pass
         elif self.isInner == True or self.isInner == False:
@@ -335,6 +347,7 @@ class MyWindow(QMainWindow):
                 self.croppedImages[3].real = np.real(self.croppedImages[3].fft)
                 self.croppedImages[3].imaginary = np.imag(self.croppedImages[3].fft)    
 
+        self.work_requested.emit(50)
         self.setMode()
         global mode
         print(mode)
@@ -366,6 +379,9 @@ class MyWindow(QMainWindow):
                     mixed_magnitude +=self.croppedImages[3].magnitude * ratio4
                 else:
                     mixed_phase+= np.exp(1j * self.croppedImages[3].phase)* ratio4
+
+                self.work_requested.emit(75)
+
                 if np.max(np.angle(mixed_phase)) == 0:
                     
                     avg_mixed_image = (mixed_magnitude)
@@ -384,6 +400,7 @@ class MyWindow(QMainWindow):
                 plt.imsave('test1.png',np.abs(final_mixed_image) , cmap='gray')
                 grayscale_image = QImage('test1.png').convertToFormat(QImage.Format_Grayscale8)
                 self.output_window.addimage(self.output,grayscale_image)
+                self.work_requested.emit(100)
             
                         
             elif(mode=='real-imag'):
@@ -405,6 +422,8 @@ class MyWindow(QMainWindow):
                 else:
                     mixed_imaginary +=(1j* self.croppedImages[2].imaginary)* ratio3
 
+                self.work_requested.emit(75)
+
                 if self.ui.comboBox_4.currentText()=="Real":
                     mixed_real +=self.croppedImages[3].real * ratio4
                 else:
@@ -421,6 +440,11 @@ class MyWindow(QMainWindow):
                 grayscale_image = QImage('test2.png').convertToFormat(QImage.Format_Grayscale8)
                 
                 self.output_window.addimage(self.output,grayscale_image)
+
+                self.work_requested.emit(100)
                 # grayscale_image = QImage('test1.png').convertToFormat(QImage.Format_Grayscale8)
+        self.worker.end = True
 
 
+    def UpdateProgressBar(self,value):
+            self.output_window.ui.progressBar.setValue(value)
