@@ -3,18 +3,17 @@ import time
 
 class Worker(QObject):
     progress = Signal(int)
-    start = Signal(int)
     completed = Signal(int)
     end = False
+
     @Slot(int)
-    def do_work(self,n):
-        if self.end == False:
-            self.start.emit(n)
+    def do_work(self, n):
+        for i in range(1, n+1):
+            if self.end == True:
+                return
+            time.sleep(0.5)
+            if self.end == True:
+                return
+            self.progress.emit(i)
 
-    def working(self,n):
-        if self.end == False:
-            time.sleep(0.1)
-            self.progress.emit(n)
-
-    def done(self):
-        self.end = True
+        self.completed.emit(i)
