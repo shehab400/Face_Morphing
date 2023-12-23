@@ -1,7 +1,7 @@
 import sys
 from PyQt5 import QtGui, QtCore,QtWidgets
 from PyQt5.QtWidgets import QRubberBand, QLabel, QApplication, QWidget
-from PyQt5.QtGui import QPixmap
+from PyQt5.QtGui import QPixmap,QImage
 from PyQt5.QtCore import QRect,QPoint
 import cv2
 import numpy as np
@@ -9,6 +9,7 @@ import numpy as np
 class QExampleLabel (QLabel):
     def __init__(self, parentQWidget = None,flag = 0):
         super(QExampleLabel, self).__init__(parentQWidget)
+        self.Label = QLabel
         self.isCropable = False
         self.currentQRubberBand = None
         self.croppedPixmap = None
@@ -60,8 +61,10 @@ class QExampleLabel (QLabel):
         #cropQPixmap.save('output.png')
 
     def getCropped(self,QRect):
-        cropped = self.pixmap().copy(QRect)
-        cropped.save('output'+str(self.flag)+'.png')
+        Image = QImage(self.img.path)
+        original = QPixmap.fromImage(Image)
+        cropped = original.copy(QRect)
+        cropped.save('output'+str(self.flag)+'.jpg')
         return cropped
 
     def changBC(self):
