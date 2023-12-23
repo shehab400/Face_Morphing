@@ -21,4 +21,4 @@ class OutputWindow(QMainWindow):
         elif key == 2:
             self.ui.output_2.clear()
             self.ui.output_2.setPixmap(QPixmap(QImage))
-            
+    
