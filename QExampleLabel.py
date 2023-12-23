@@ -15,8 +15,10 @@ class QExampleLabel (QLabel):
         self.croppedPixmap = None
         self.img = None
         self.flag = flag
-        self.contrasted = 0
-        self.brightned = 0
+        self.isContrast = False
+        self.isBrightness = False
+        self.contrast = 0
+        self.brightness = 0
         self.Rect = QRect(QPoint(0,0),QtCore.QSize())
 
     def setImage (self,pixmap,img):
@@ -29,6 +31,21 @@ class QExampleLabel (QLabel):
 
     def setIsCropable(self,bool):
         self.isCropable = bool
+        if bool == True:
+            self.isContrast = False
+            self.isBrightness = False
+
+    def setIsBrightness(self,bool):
+        self.isBrightness = bool
+        if bool == True:
+            self.isCropable = False
+            self.isContrast = False
+
+    def setIsContrast(self,bool):
+        self.isContrast = bool
+        if bool == True:
+            self.isCropable = False
+            self.isBrightness = False
 
     def resetRubberBand(self):
         if self.currentQRubberBand != None:
@@ -37,28 +54,32 @@ class QExampleLabel (QLabel):
         self.Rect = QRect(QPoint(0,0),QtCore.QSize())
 
     def mousePressEvent (self, eventQMouseEvent):
-        if self.isCropable == False:
-            return
-        if self.currentQRubberBand != None:
-            self.currentQRubberBand.hide()
-        self.originQPoint = eventQMouseEvent.pos()
-        self.currentQRubberBand = QRubberBand(QRubberBand.Rectangle, self)
-        self.currentQRubberBand.setGeometry(QRect(self.originQPoint, QtCore.QSize()))
-        self.currentQRubberBand.show()
+        if self.isCropable == True:
+            if self.currentQRubberBand != None:
+                self.currentQRubberBand.hide()
+            self.originQPoint = eventQMouseEvent.pos()
+            self.currentQRubberBand = QRubberBand(QRubberBand.Rectangle, self)
+            self.currentQRubberBand.setGeometry(QRect(self.originQPoint, QtCore.QSize()))
+            self.currentQRubberBand.show()
+        elif self.isBrightness == True or self.isContrast == True:
+            self.originQPoint = eventQMouseEvent.pos()
 
     def mouseMoveEvent (self, eventQMouseEvent):
-        if self.isCropable == False:
-            return
-        self.currentQRubberBand.setGeometry(QRect(self.originQPoint, eventQMouseEvent.pos()).normalized())
+        if self.isCropable == True:
+            self.currentQRubberBand.setGeometry(QRect(self.originQPoint, eventQMouseEvent.pos()).normalized())
+        elif self.isBrightness == True or self.isContrast == True:
+            self.SecondQPoint = eventQMouseEvent.pos()
 
     def mouseReleaseEvent (self, eventQMouseEvent):
-        if self.isCropable == False:
-            return
-        currentQRect = self.currentQRubberBand.geometry()
-        self.Rect = currentQRect
-        cropQPixmap = self.pixmap().copy(currentQRect)
-        self.croppedPixmap = cropQPixmap
-        #cropQPixmap.save('output.png')
+        if self.isCropable == True:
+            currentQRect = self.currentQRubberBand.geometry()
+            self.Rect = currentQRect
+            cropQPixmap = self.pixmap().copy(currentQRect)
+            self.croppedPixmap = cropQPixmap
+        elif self.isBrightness == True:
+            self.brightness = self.originQPoint.y() - self.SecondQPoint.y()
+        elif self.isContrast == True:
+            self.contrast = self.SecondQPoint.x() - self.originQPoint.x()
 
     def getCropped(self,QRect):
         Image = QImage(self.img.path)
@@ -68,8 +89,8 @@ class QExampleLabel (QLabel):
         return cropped
 
     def changBC(self):
-        BCimage = cv2.addWeighted(self.img, self.contrasted, np.zeros(self.img.shape, self.img.dtype), self.brightned , 50)
-
+        Image = cv2.addWeighted(self.img, self.contrast, np.zeros(self.img.shape, self.img.dtype), self.brightness , 50)
+        return Image
 
 if __name__ == '__main__':
     myQApplication = QApplication(sys.argv)
