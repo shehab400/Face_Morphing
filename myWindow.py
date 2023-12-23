@@ -288,7 +288,7 @@ class MyWindow(QMainWindow):
         Rect = self.changed1.Rect
         if Rect == QRect(QPoint(0,0),QtCore.QSize()):
             pass
-        elif self.isInner == True:
+        elif self.isInner == True or self.isInner == False:
             if Images[0].type!=0:
                 self.fixed1.getCropped(Rect)
                 img,pixmap = self.imageInitializer('output1.jpg',1)
@@ -306,14 +306,34 @@ class MyWindow(QMainWindow):
                 img,pixmap = self.imageInitializer('output4.jpg',4)
                 self.croppedImages[3]=img
         elif self.isInner == False:
-                if Images[0].type!=0:
-                    self.changed1.getCropped(Rect)
-                if Images[1].type!=0:
-                    pass
-                if Images[2].type!=0:
-                    pass
-                if Images[3].type!=0:
-                    pass
+            if Images[0].type!=0:
+                self.croppedImages[0].raw_data = Images[0].raw_data - self.croppedImages[0].raw_data
+                self.croppedImages[0].fft = np.fft.fft2(self.croppedImages[0].raw_data)
+                self.croppedImages[0].magnitude = np.abs(self.croppedImages[0].fft)
+                self.croppedImages[0].phase = np.angle(self.croppedImages[0].fft)
+                self.croppedImages[0].real = np.real(self.croppedImages[0].fft)
+                self.croppedImages[0].imaginary = np.imag(self.croppedImages[0].fft)    
+            if Images[1].type!=0:
+                self.croppedImages[1].raw_data = Images[1].raw_data - self.croppedImages[1].raw_data
+                self.croppedImages[1].fft = np.fft.fft2(self.croppedImages[1].raw_data)
+                self.croppedImages[1].magnitude = np.abs(self.croppedImages[1].fft)
+                self.croppedImages[1].phase = np.angle(self.croppedImages[1].fft)
+                self.croppedImages[1].real = np.real(self.croppedImages[1].fft)
+                self.croppedImages[1].imaginary = np.imag(self.croppedImages[1].fft)    
+            if Images[2].type!=0:
+                self.croppedImages[2].raw_data = Images[2].raw_data - self.croppedImages[2].raw_data
+                self.croppedImages[2].fft = np.fft.fft2(self.croppedImages[2].raw_data)
+                self.croppedImages[2].magnitude = np.abs(self.croppedImages[2].fft)
+                self.croppedImages[2].phase = np.angle(self.croppedImages[2].fft)
+                self.croppedImages[2].real = np.real(self.croppedImages[2].fft)
+                self.croppedImages[2].imaginary = np.imag(self.croppedImages[2].fft)    
+            if Images[3].type!=0:
+                self.croppedImages[3].raw_data = Images[3].raw_data - self.croppedImages[3].raw_data
+                self.croppedImages[3].fft = np.fft.fft2(self.croppedImages[3].raw_data)
+                self.croppedImages[3].magnitude = np.abs(self.croppedImages[3].fft)
+                self.croppedImages[3].phase = np.angle(self.croppedImages[3].fft)
+                self.croppedImages[3].real = np.real(self.croppedImages[3].fft)
+                self.croppedImages[3].imaginary = np.imag(self.croppedImages[3].fft)    
 
         self.setMode()
         global mode
