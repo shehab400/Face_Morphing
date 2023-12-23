@@ -66,10 +66,10 @@ class MyWindow(QMainWindow):
         self.ui.comboBox_2.currentTextChanged.connect(lambda: self.updatingComboBox(self.ui.comboBox_2,2))
         self.ui.comboBox_3.currentTextChanged.connect(lambda: self.updatingComboBox(self.ui.comboBox_3,3))
         self.ui.comboBox_4.currentTextChanged.connect(lambda: self.updatingComboBox(self.ui.comboBox_4,4))
-        self.ui.widget.mousePressEvent  = lambda event: self.removeImage(1,self.fixed1,self.changed1)
-        self.ui.widget_2.mousePressEvent  = lambda event: self.removeImage(2,self.fixed2,self.changed2)
-        self.ui.widget_3.mousePressEvent  = lambda event: self.removeImage(3,self.fixed3,self.changed3)
-        self.ui.widget_4.mousePressEvent  = lambda event: self.removeImage(4,self.fixed4,self.changed4)
+        # self.ui.widget.mousePressEvent  = lambda event: self.removeImage(1,self.fixed1,self.changed1)
+        # self.ui.widget_2.mousePressEvent  = lambda event: self.removeImage(2,self.fixed2,self.changed2)
+        # self.ui.widget_3.mousePressEvent  = lambda event: self.removeImage(3,self.fixed3,self.changed3)
+        # self.ui.widget_4.mousePressEvent  = lambda event: self.removeImage(4,self.fixed4,self.changed4)
         #self.fixed1.mousePressEvent = lambda event: self.mousePressEvent(self.ui.fixedImage1)
 
         self.ui.fixedImage1.mouseDoubleClickEvent =lambda event: self.imageDisplay(self.fixed1,self.changed1,self.ui.comboBox_1,1)
@@ -145,13 +145,13 @@ class MyWindow(QMainWindow):
         # # Get imag
         img.imaginary = np.imag(img.fft)
         
-        return img,self.pixmap,grayscale_image
+        return img,self.pixmap
 
     def imageDisplay(self,Qlabel,Qlabel2,QComboBox,imglabel):
         filename = QtWidgets.QFileDialog.getOpenFileName()
         path = filename[0]
-        img,self.pixmap,grayscale_image = self.imageInitializer(path,imglabel)
-        Qlabel.setImage(self.pixmap,grayscale_image)
+        img,self.pixmap = self.imageInitializer(path,imglabel)
+        Qlabel.setImage(self.pixmap,img)
 
         Images[img.imagelabel-1] = img
         print(img.imagelabel)
@@ -225,7 +225,7 @@ class MyWindow(QMainWindow):
             plt.imsave('test.png',imaginary_part_normalized , cmap='gray')
             grayscale_image = QImage('test.png').convertToFormat(QImage.Format_Grayscale8) 
             filteredImages[img.imagelabel-1] = grayscale_image
-        Qlabel.setImage(QPixmap(grayscale_image),grayscale_image)
+        Qlabel.setImage(QPixmap(grayscale_image),img)
 
     def updatingComboBox(self,QComboBox,flag):
         component=QComboBox.currentText()
@@ -275,20 +275,20 @@ class MyWindow(QMainWindow):
 
       if self.isInner == True:
         if Images[0].type!=0:
-            self.changed1.getCropped(Rect)
-            img,pixmap,grayscale_image = self.imageInitializer('output1.png',1)
+            self.fixed1.getCropped(Rect)
+            img,pixmap = self.imageInitializer('output1.png',1)
             self.croppedImages[0]=img
         if Images[1].type!=0:
-            self.changed2.getCropped(Rect)
-            img,pixmap,grayscale_image = self.imageInitializer('output2.png',2)
+            self.fixed2.getCropped(Rect)
+            img,pixmap = self.imageInitializer('output2.png',2)
             self.croppedImages[1]=img
         if Images[2].type!=0:
-            self.changed3.getCropped(Rect)
-            img,pixmap,grayscale_image = self.imageInitializer('output3.png',3)
+            self.fixed3.getCropped(Rect)
+            img,pixmap = self.imageInitializer('output3.png',3)
             self.croppedImages[2]=img
         if Images[3].type!=0:
-            self.changed4.getCropped(Rect)
-            img,pixmap,grayscale_image = self.imageInitializer('output4.png',4)
+            self.fixed4.getCropped(Rect)
+            img,pixmap = self.imageInitializer('output4.png',4)
             self.croppedImages[3]=img
       elif self.isInner == False:
         if Rect == QRect(QPoint(0,0),QtCore.QSize()):
