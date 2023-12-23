@@ -64,7 +64,7 @@ class QExampleLabel (QLabel):
         Image = QImage(self.img.path)
         original = QPixmap.fromImage(Image)
         cropped = original.copy(QRect)
-        cropped.save('output'+str(self.flag)+'.png')
+        cropped.save('output'+str(self.flag)+'.jpg')
         return cropped
 
     def changBC(self):
