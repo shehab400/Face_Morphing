@@ -45,6 +45,8 @@ class MyWindow(QMainWindow):
         self.changed3 = QExampleLabel(self,3)
         self.changed4 = QExampleLabel(self,4)
         self.changed1.setIsCropable(True)
+        for fixed in [self.fixed1,self.fixed2,self.fixed3,self.fixed4]:
+            fixed.setIsBrightness(True)
         self.output_window = OutputWindow()
         self.ui.applyButton.clicked.connect(self.open_output_window)
         self.ui.widget.layout().addWidget(self.fixed1)
@@ -57,6 +59,8 @@ class MyWindow(QMainWindow):
         self.ui.widget_8.layout().addWidget(self.changed4)
         self.ui.radioButton.setChecked(True)
         self.ui.Inner_radio.setChecked(True)
+        self.ui.brightness_radio.setChecked(True)
+
         self.isInner = True
         self.overlay_color = QColor(255, 0, 0, 100)
         for combo in [self.ui.comboBox_1,self.ui.comboBox_2,self.ui.comboBox_3,self.ui.comboBox_4]:
@@ -81,8 +85,10 @@ class MyWindow(QMainWindow):
         #      slider.valueChanged.connect(lambda value, mode=mode: self.mixing(value))
         self.radioButton.toggled.connect(self.whichoutput)
         self.radioButton_2.toggled.connect(self.whichoutput)
-        self.Inner_radio.toggled.connect(self.select_region)
-        self.Outer_radio.toggled.connect(self.select_region)
+        self.Inner_radio.toggled.connect(self.PhotoAdjustment)
+        self.Outer_radio.toggled.connect(self.PhotoAdjustment)
+        self.contrast_radio.toggled.connect(self.PhotoAdjustment)
+        self.brightness_radio.toggled.connect(self.PhotoAdjustment)
 
 
         self.output = 1
@@ -174,11 +180,19 @@ class MyWindow(QMainWindow):
                  Images.pop(index)
                  print(len(Images))
     
-    def select_region(self):
+    def PhotoAdjustment(self):
         if self.Inner_radio.isChecked():
             self.isInner = True
+            self.changed1.setIsCropable(True)
         elif self.Outer_radio.isChecked():
             self.isInner = False
+            self.changed1.setIsCropable(True)
+        elif self.brightness_radio.isChecked():
+            for fixed in [self.fixed1,self.fixed2,self.fixed3,self.fixed4]:
+                fixed.setIsBrightness(True)
+        elif self.contrast_radio.isChecked():
+            for fixed in [self.fixed1,self.fixed2,self.fixed3,self.fixed4]:
+                fixed.setIsContrast(True)
             
     def selectBC(self):
         if self.brightness_radio.isChecked():
