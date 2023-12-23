@@ -45,6 +45,8 @@ class MyWindow(QMainWindow):
         self.changed3 = QExampleLabel(self,3)
         self.changed4 = QExampleLabel(self,4)
         self.changed1.setIsCropable(True)
+        for fixed in [self.fixed1,self.fixed2,self.fixed3,self.fixed4]:
+            fixed.setIsBrightness(True)
         self.output_window = OutputWindow()
         self.ui.applyButton.clicked.connect(self.open_output_window)
         self.ui.widget.layout().addWidget(self.fixed1)
@@ -57,6 +59,8 @@ class MyWindow(QMainWindow):
         self.ui.widget_8.layout().addWidget(self.changed4)
         self.ui.radioButton.setChecked(True)
         self.ui.Inner_radio.setChecked(True)
+        self.ui.brightness_radio.setChecked(True)
+
         self.isInner = True
         self.overlay_color = QColor(255, 0, 0, 100)
         for combo in [self.ui.comboBox_1,self.ui.comboBox_2,self.ui.comboBox_3,self.ui.comboBox_4]:
@@ -81,8 +85,10 @@ class MyWindow(QMainWindow):
         #      slider.valueChanged.connect(lambda value, mode=mode: self.mixing(value))
         self.radioButton.toggled.connect(self.whichoutput)
         self.radioButton_2.toggled.connect(self.whichoutput)
-        self.Inner_radio.toggled.connect(self.select_region)
-        self.Outer_radio.toggled.connect(self.select_region)
+        self.Inner_radio.toggled.connect(self.PhotoAdjustment)
+        self.Outer_radio.toggled.connect(self.PhotoAdjustment)
+        self.contrast_radio.toggled.connect(self.PhotoAdjustment)
+        self.brightness_radio.toggled.connect(self.PhotoAdjustment)
 
 
         self.output = 1
@@ -174,11 +180,19 @@ class MyWindow(QMainWindow):
                  Images.pop(index)
                  print(len(Images))
     
-    def select_region(self):
+    def PhotoAdjustment(self):
         if self.Inner_radio.isChecked():
             self.isInner = True
+            self.changed1.setIsCropable(True)
         elif self.Outer_radio.isChecked():
             self.isInner = False
+            self.changed1.setIsCropable(True)
+        elif self.brightness_radio.isChecked():
+            for fixed in [self.fixed1,self.fixed2,self.fixed3,self.fixed4]:
+                fixed.setIsBrightness(True)
+        elif self.contrast_radio.isChecked():
+            for fixed in [self.fixed1,self.fixed2,self.fixed3,self.fixed4]:
+                fixed.setIsContrast(True)
             
     def selectBC(self):
         if self.brightness_radio.isChecked():
@@ -274,7 +288,7 @@ class MyWindow(QMainWindow):
         Rect = self.changed1.Rect
         if Rect == QRect(QPoint(0,0),QtCore.QSize()):
             pass
-        elif self.isInner == True:
+        elif self.isInner == True or self.isInner == False:
             if Images[0].type!=0:
                 self.fixed1.getCropped(Rect)
                 img,pixmap = self.imageInitializer('output1.jpg',1)
@@ -292,14 +306,34 @@ class MyWindow(QMainWindow):
                 img,pixmap = self.imageInitializer('output4.jpg',4)
                 self.croppedImages[3]=img
         elif self.isInner == False:
-                if Images[0].type!=0:
-                    self.changed1.getCropped(Rect)
-                if Images[1].type!=0:
-                    pass
-                if Images[2].type!=0:
-                    pass
-                if Images[3].type!=0:
-                    pass
+            if Images[0].type!=0:
+                self.croppedImages[0].raw_data = Images[0].raw_data - self.croppedImages[0].raw_data
+                self.croppedImages[0].fft = np.fft.fft2(self.croppedImages[0].raw_data)
+                self.croppedImages[0].magnitude = np.abs(self.croppedImages[0].fft)
+                self.croppedImages[0].phase = np.angle(self.croppedImages[0].fft)
+                self.croppedImages[0].real = np.real(self.croppedImages[0].fft)
+                self.croppedImages[0].imaginary = np.imag(self.croppedImages[0].fft)    
+            if Images[1].type!=0:
+                self.croppedImages[1].raw_data = Images[1].raw_data - self.croppedImages[1].raw_data
+                self.croppedImages[1].fft = np.fft.fft2(self.croppedImages[1].raw_data)
+                self.croppedImages[1].magnitude = np.abs(self.croppedImages[1].fft)
+                self.croppedImages[1].phase = np.angle(self.croppedImages[1].fft)
+                self.croppedImages[1].real = np.real(self.croppedImages[1].fft)
+                self.croppedImages[1].imaginary = np.imag(self.croppedImages[1].fft)    
+            if Images[2].type!=0:
+                self.croppedImages[2].raw_data = Images[2].raw_data - self.croppedImages[2].raw_data
+                self.croppedImages[2].fft = np.fft.fft2(self.croppedImages[2].raw_data)
+                self.croppedImages[2].magnitude = np.abs(self.croppedImages[2].fft)
+                self.croppedImages[2].phase = np.angle(self.croppedImages[2].fft)
+                self.croppedImages[2].real = np.real(self.croppedImages[2].fft)
+                self.croppedImages[2].imaginary = np.imag(self.croppedImages[2].fft)    
+            if Images[3].type!=0:
+                self.croppedImages[3].raw_data = Images[3].raw_data - self.croppedImages[3].raw_data
+                self.croppedImages[3].fft = np.fft.fft2(self.croppedImages[3].raw_data)
+                self.croppedImages[3].magnitude = np.abs(self.croppedImages[3].fft)
+                self.croppedImages[3].phase = np.angle(self.croppedImages[3].fft)
+                self.croppedImages[3].real = np.real(self.croppedImages[3].fft)
+                self.croppedImages[3].imaginary = np.imag(self.croppedImages[3].fft)    
 
         self.setMode()
         global mode
