@@ -18,5 +18,8 @@ class Image:
         # Get imag
         self.imaginary = None
         self.type=None
+        self.pixmap=None
+        self.grayscale=None
+    
         # self.pixmap = None
         # self.components = dict()
