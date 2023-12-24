@@ -33,8 +33,6 @@ Images.append(image4)
 Qlabelsfixed=[]
 filteredImages = Images.copy()
 mode=""
-minHeigh =10000
-minWidth=10000
 class MyWindow(QMainWindow):
     work_requested = Signal(int)
 
@@ -51,6 +49,8 @@ class MyWindow(QMainWindow):
         self.changed2 = QExampleLabel(self,2)
         self.changed3 = QExampleLabel(self,3)
         self.changed4 = QExampleLabel(self,4)
+        self.minHeight = 10000
+        self.minWidth = 10000
         self.changed1.setIsCropable(True)
         for label in[self.fixed1, self.fixed2, self.fixed3, self.fixed4]:
             Qlabelsfixed.append(label)
@@ -160,8 +160,8 @@ class MyWindow(QMainWindow):
         img.path = path
         # self.path
         # self.label = self.findChild(Qlabel, "Qlabel")
-        original_image = QImage(img.path)
-        grayscale_image = original_image.convertToFormat(QImage.Format_Grayscale8)
+        img.original_image = QImage(img.path)
+        grayscale_image = img.original_image.convertToFormat(QImage.Format_Grayscale8)
         self.pixmap = QPixmap.fromImage(grayscale_image)
         img.pixmap = self.pixmap
         img.grayscale = grayscale_image
@@ -172,8 +172,8 @@ class MyWindow(QMainWindow):
         img.raw_data=raw_data
         # Get size
         img.shape = img.raw_data.shape
-        img.width = img.shape[0]
-        img.height = img.shape[1]
+        img.width = img.shape[1]
+        img.height = img.shape[0]
         
         # # Fourier FFT
         img.fft = np.fft.fft2(img.raw_data)
@@ -199,31 +199,50 @@ class MyWindow(QMainWindow):
         #             image.height = minHeigh
         return img,self.pixmap,grayscale_image
             
+    def QImgtoImage(self,QImg,imglabel):
+            QImg.save('temp.jpg')
+            img, pixmap, grayscale_image = self.imageInitializer('temp.jpg',imglabel)
+            os.remove('temp.jpg')
+            return img
+            #the Image returned doesn't have a path, don't try to access it
+
+    def ResizeImgs(self):
+        for image,label in zip(Images,Qlabelsfixed):
+            if image.type!=0:
+                pixmap=image.pixmap.scaled(self.minWidth, self.minHeight)
+                label.setImage(pixmap,image,image.grayscale)
+                original = QPixmap.fromImage(image.original_image).scaled(self.minWidth, self.minHeight)
+                Qimg = original.toImage()
+                newimg = self.QImgtoImage(Qimg,image.imagelabel)
+                Images[image.imagelabel-1] = newimg
+                
 
     def imageDisplay(self,Qlabel,Qlabel2,QComboBox,imglabel):
         filename = QtWidgets.QFileDialog.getOpenFileName()
         path = filename[0]
         img,self.pixmap,grayscale_image = self.imageInitializer(path,imglabel)
-        global minHeigh, minWidth
-        if img.height < minHeigh:
-            minHeigh = img.height
-            img.height=minHeigh 
-        if img.width < minWidth:
-            minWidth = img.width
-            img.width=minWidth
+        if img.height < self.minHeight:
+            self.minHeight = img.height
+            img.height=self.minHeight 
+        if img.width < self.minWidth:
+            self.minWidth = img.width
+            img.width=self.minWidth
         Images[img.imagelabel-1] = img
         if Images[1].type!=0:
-            for i, label in enumerate(Qlabelsfixed):
-                # pixmap=label.pixmap()
-                for ii,image in enumerate(Images):
-                 if image.type!=0:
-                    if ii==i:
-                        pixmap=image.pixmap.scaled(minWidth, minHeigh)
-                        label.setImage(pixmap,image,image.grayscale)
+            # for i, label in enumerate(Qlabelsfixed)
+            #     for ii,image in enumerate(Images):
+            #      if image.type!=0:
+            #         if ii==i:
+            #             pixmap=image.pixmap.scaled(self.minWidth, self.minHeight)
+            #             Qimg = pixmap.toImage()
+            #             newimg = self.QImgtoImage(Qimg,img.imagelabel)
+            #             Images[img.imagelabel-1] = newimg
+            #             label.setImage(pixmap,image,image.grayscale)
+            self.ResizeImgs()
                         
 
-        # if minHeigh!=10000 and minWidth!=10000:
-        #     self.pixmap = self.pixmap.scaled(minWidth, minHeigh, QtCore.Qt.KeepAspectRatio)
+        # if self.minHeight!=10000 and self.minWidth!=10000:
+        #     self.pixmap = self.pixmap.scaled(self.minWidth, self.minHeight, QtCore.Qt.KeepAspectRatio)
         else:
            Qlabel.setImage(img.pixmap,img,grayscale_image)
 
@@ -311,7 +330,7 @@ class MyWindow(QMainWindow):
             plt.imsave('test.png',imaginary_part_normalized , cmap='gray')
             grayscale_image = QImage('test.png').convertToFormat(QImage.Format_Grayscale8) 
             filteredImages[img.imagelabel-1] = grayscale_image
-        Qlabel.setImage(QPixmap(grayscale_image).scaled( minWidth,minHeigh),img,grayscale_image) #changed line
+        Qlabel.setImage(QPixmap(grayscale_image).scaled(self.minWidth,self.minHeight),img,grayscale_image) #changed line
 
     def updatingComboBox(self,QComboBox,flag):
         component=QComboBox.currentText()
