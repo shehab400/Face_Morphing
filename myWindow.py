@@ -17,6 +17,7 @@ from Worker import *
 count = 0
 
 Images=[]
+Images1=[]
 image1=Image()
 image1.type=0
 image2=Image()
@@ -206,7 +207,7 @@ class MyWindow(QMainWindow):
         global minHeigh, minWidth
         if img.height < minHeigh:
             minHeigh = img.height
-            img.height=minHeigh
+            img.height=minHeigh 
         if img.width < minWidth:
             minWidth = img.width
             img.width=minWidth
@@ -219,6 +220,8 @@ class MyWindow(QMainWindow):
                     if ii==i:
                         pixmap=image.pixmap.scaled(minWidth, minHeigh)
                         label.setImage(pixmap,image,image.grayscale)
+                        
+
         # if minHeigh!=10000 and minWidth!=10000:
         #     self.pixmap = self.pixmap.scaled(minWidth, minHeigh, QtCore.Qt.KeepAspectRatio)
         else:
@@ -308,7 +311,7 @@ class MyWindow(QMainWindow):
             plt.imsave('test.png',imaginary_part_normalized , cmap='gray')
             grayscale_image = QImage('test.png').convertToFormat(QImage.Format_Grayscale8) 
             filteredImages[img.imagelabel-1] = grayscale_image
-        Qlabel.setImage(QPixmap(grayscale_image),img,grayscale_image)
+        Qlabel.setImage(QPixmap(grayscale_image).scaled( minWidth,minHeigh),img,grayscale_image) #changed line
 
     def updatingComboBox(self,QComboBox,flag):
         component=QComboBox.currentText()

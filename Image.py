@@ -20,6 +20,7 @@ class Image:
         self.type=None
         self.pixmap=None
         self.grayscale=None
+        self.key=0
     
         # self.pixmap = None
         # self.components = dict()
