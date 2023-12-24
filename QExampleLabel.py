@@ -130,7 +130,7 @@ class QExampleLabel (QLabel):
     def change_brightness(self, img, value=0):
         hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
         h, s, v = cv2.split(hsv)
-        v = cv2.add(v,int(value/2))
+        v = cv2.add(v,int(value/10))
         v[v > 255] = 255
         v[v < 0] = 0
         final_hsv = cv2.merge((h, s, v))
