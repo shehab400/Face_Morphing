@@ -11,6 +11,8 @@ from Image import *
 from matplotlib.colors import Normalize
 from QExampleLabel import *
 from outputWindow import *
+import time
+from Worker import *
 
 count = 0
 
@@ -30,6 +32,7 @@ Images.append(image4)
 filteredImages = Images.copy()
 mode=""
 class MyWindow(QMainWindow):
+    work_requested = Signal(int)
 
     def __init__(self):
         super(MyWindow, self).__init__()
@@ -61,6 +64,14 @@ class MyWindow(QMainWindow):
         self.ui.Inner_radio.setChecked(True)
         self.ui.brightness_radio.setChecked(True)
 
+        self.worker = Worker()
+        self.worker_thread = QThread()
+        self.worker.progress.connect(self.UpdateProgressBar)
+        self.worker.completed.connect(self.showOutput)
+        self.work_requested.connect(self.worker.do_work)
+        self.worker.moveToThread(self.worker_thread)
+        self.worker_thread.start()
+
         self.isInner = True
         self.overlay_color = QColor(255, 0, 0, 100)
         for combo in [self.ui.comboBox_1,self.ui.comboBox_2,self.ui.comboBox_3,self.ui.comboBox_4]:
@@ -70,16 +81,25 @@ class MyWindow(QMainWindow):
         self.ui.comboBox_2.currentTextChanged.connect(lambda: self.updatingComboBox(self.ui.comboBox_2,2))
         self.ui.comboBox_3.currentTextChanged.connect(lambda: self.updatingComboBox(self.ui.comboBox_3,3))
         self.ui.comboBox_4.currentTextChanged.connect(lambda: self.updatingComboBox(self.ui.comboBox_4,4))
+        for slider in [self.ui.horizontalSlider,self.ui.horizontalSlider_2,self.ui.horizontalSlider_3,self.horizontalSlider_4]:
+            slider.valueChanged.connect(self.UpdateLabels)
+        self.UpdateLabels()
         # self.ui.widget.mousePressEvent  = lambda event: self.removeImage(1,self.fixed1,self.changed1)
         # self.ui.widget_2.mousePressEvent  = lambda event: self.removeImage(2,self.fixed2,self.changed2)
         # self.ui.widget_3.mousePressEvent  = lambda event: self.removeImage(3,self.fixed3,self.changed3)
         # self.ui.widget_4.mousePressEvent  = lambda event: self.removeImage(4,self.fixed4,self.changed4)
         #self.fixed1.mousePressEvent = lambda event: self.mousePressEvent(self.ui.fixedImage1)
 
-        self.ui.fixedImage1.mouseDoubleClickEvent =lambda event: self.imageDisplay(self.fixed1,self.changed1,self.ui.comboBox_1,1)
-        self.ui.fixedImage2.mouseDoubleClickEvent =lambda event: self.imageDisplay(self.fixed2,self.changed2,self.ui.comboBox_2,2)
-        self.ui.fixedImage3.mouseDoubleClickEvent =lambda event: self.imageDisplay(self.fixed3,self.changed3,self.ui.comboBox_3,3)
-        self.ui.fixedImage4.mouseDoubleClickEvent =lambda event: self.imageDisplay(self.fixed4,self.changed4,self.ui.comboBox_4,4)
+        self.fixed1.doubleClicked.connect(lambda event: self.imageDisplay(self.fixed1,self.changed1,self.ui.comboBox_1,1))
+        self.fixed2.doubleClicked.connect(lambda event: self.imageDisplay(self.fixed2,self.changed2,self.ui.comboBox_2,2))
+        self.fixed3.doubleClicked.connect(lambda event: self.imageDisplay(self.fixed3,self.changed3,self.ui.comboBox_3,3))
+        self.fixed4.doubleClicked.connect(lambda event: self.imageDisplay(self.fixed4,self.changed4,self.ui.comboBox_4,4))
+        self.output_window.ui.pushButton.clicked.connect(self.Cancel)
+
+        self.fixed1.BCchanged.connect(lambda: self.UpdateBC(self.fixed1,1,self.ui.comboBox_1))
+        self.fixed2.BCchanged.connect(lambda: self.UpdateBC(self.fixed2,2,self.ui.comboBox_2))
+        self.fixed3.BCchanged.connect(lambda: self.UpdateBC(self.fixed3,3,self.ui.comboBox_3))
+        self.fixed4.BCchanged.connect(lambda: self.UpdateBC(self.fixed4,4,self.ui.comboBox_4))
 
         # for slider in [self.ui.horizontalSlider,self.ui.horizontalSlider_2,self.ui.horizontalSlider_3,self.ui.horizontalSlider_4]:
         #      slider.valueChanged.connect(lambda value, mode=mode: self.mixing(value))
@@ -99,14 +119,15 @@ class MyWindow(QMainWindow):
     def open_output_window(self):
         global count
         # Create a new instance of the output window
-        if count == 0:
             # Show the output window
-            self.mixing()
-            self.output_window.show()
-            count = 1 
-        else: 
-            count = 0
-            pass
+        self.output_window.ui.progressBar.setValue(0)
+        self.output_window.show()
+        count = 1 
+        self.worker.end = False
+        self.mixing()
+
+    def UpdateBC(self,Qlabel,imglabel,combobox):
+        pass
 
     # def mousePressEvent(self,Qlabel):
     #     Qlabel.
@@ -120,6 +141,12 @@ class MyWindow(QMainWindow):
     #     self.ui.fixedImage1.currentQRubberBand.deleteLater()
     #     cropQPixmap = self.ui.fixedImage1.pixmap().copy(currentQRect)
     #     cropQPixmap.save('output.png')
+
+    def UpdateLabels(self):
+        self.ui.label_6.setText(str(self.ui.horizontalSlider.value()))
+        self.ui.label_7.setText(str(self.ui.horizontalSlider_2.value()))
+        self.ui.label_8.setText(str(self.ui.horizontalSlider_3.value()))
+        self.ui.label_9.setText(str(self.ui.horizontalSlider_4.value()))
 
     def imageInitializer(self,path,imglabel):
         img = Image()
@@ -151,13 +178,13 @@ class MyWindow(QMainWindow):
         # # Get imag
         img.imaginary = np.imag(img.fft)
         
-        return img,self.pixmap
+        return img,self.pixmap,grayscale_image
 
     def imageDisplay(self,Qlabel,Qlabel2,QComboBox,imglabel):
         filename = QtWidgets.QFileDialog.getOpenFileName()
         path = filename[0]
-        img,self.pixmap = self.imageInitializer(path,imglabel)
-        Qlabel.setImage(self.pixmap,img)
+        img,self.pixmap,grayscale_image = self.imageInitializer(path,imglabel)
+        Qlabel.setImage(self.pixmap,img,grayscale_image)
 
         Images[img.imagelabel-1] = img
         print(img.imagelabel)
@@ -187,7 +214,7 @@ class MyWindow(QMainWindow):
         elif self.Outer_radio.isChecked():
             self.isInner = False
             self.changed1.setIsCropable(True)
-        elif self.brightness_radio.isChecked():
+        if self.brightness_radio.isChecked():
             for fixed in [self.fixed1,self.fixed2,self.fixed3,self.fixed4]:
                 fixed.setIsBrightness(True)
         elif self.contrast_radio.isChecked():
@@ -239,7 +266,7 @@ class MyWindow(QMainWindow):
             plt.imsave('test.png',imaginary_part_normalized , cmap='gray')
             grayscale_image = QImage('test.png').convertToFormat(QImage.Format_Grayscale8) 
             filteredImages[img.imagelabel-1] = grayscale_image
-        Qlabel.setImage(QPixmap(grayscale_image),img)
+        Qlabel.setImage(QPixmap(grayscale_image),img,grayscale_image)
 
     def updatingComboBox(self,QComboBox,flag):
         component=QComboBox.currentText()
@@ -291,19 +318,19 @@ class MyWindow(QMainWindow):
         elif self.isInner == True or self.isInner == False:
             if Images[0].type!=0:
                 self.fixed1.getCropped(Rect)
-                img,pixmap = self.imageInitializer('output1.jpg',1)
+                img,pixmap,grayscale_image = self.imageInitializer('output1.jpg',1)
                 self.croppedImages[0]=img
             if Images[1].type!=0:
                 self.fixed2.getCropped(Rect)
-                img,pixmap = self.imageInitializer('output2.jpg',2)
+                img,pixmap,grayscale_image = self.imageInitializer('output2.jpg',2)
                 self.croppedImages[1]=img
             if Images[2].type!=0:
                 self.fixed3.getCropped(Rect)
-                img,pixmap = self.imageInitializer('output3.jpg',3)
+                img,pixmap,grayscale_image = self.imageInitializer('output3.jpg',3)
                 self.croppedImages[2]=img
             if Images[3].type!=0:
                 self.fixed4.getCropped(Rect)
-                img,pixmap = self.imageInitializer('output4.jpg',4)
+                img,pixmap,grayscale_image = self.imageInitializer('output4.jpg',4)
                 self.croppedImages[3]=img
         elif self.isInner == False:
             if Images[0].type!=0:
@@ -366,6 +393,8 @@ class MyWindow(QMainWindow):
                     mixed_magnitude +=self.croppedImages[3].magnitude * ratio4
                 else:
                     mixed_phase+= np.exp(1j * self.croppedImages[3].phase)* ratio4
+
+
                 if np.max(np.angle(mixed_phase)) == 0:
                     
                     avg_mixed_image = (mixed_magnitude)
@@ -383,8 +412,7 @@ class MyWindow(QMainWindow):
                     final_mixed_image=final_mixed_image/np.max(final_mixed_image)
                 plt.imsave('test1.png',np.abs(final_mixed_image) , cmap='gray')
                 grayscale_image = QImage('test1.png').convertToFormat(QImage.Format_Grayscale8)
-                self.output_window.addimage(self.output,grayscale_image)
-            
+                self.tempImg = grayscale_image            
                         
             elif(mode=='real-imag'):
                 
@@ -405,6 +433,7 @@ class MyWindow(QMainWindow):
                 else:
                     mixed_imaginary +=(1j* self.croppedImages[2].imaginary)* ratio3
 
+
                 if self.ui.comboBox_4.currentText()=="Real":
                     mixed_real +=self.croppedImages[3].real * ratio4
                 else:
@@ -419,8 +448,19 @@ class MyWindow(QMainWindow):
                     final_mixed_image=final_mixed_image/np.max(final_mixed_image)
                 plt.imsave('test2.png',np.abs(final_mixed_image) , cmap='gray')
                 grayscale_image = QImage('test2.png').convertToFormat(QImage.Format_Grayscale8)
-                
-                self.output_window.addimage(self.output,grayscale_image)
+                self.tempImg = grayscale_image
                 # grayscale_image = QImage('test1.png').convertToFormat(QImage.Format_Grayscale8)
+        self.Progressing(5)
 
+    def Progressing(self,value):
+        self.output_window.ui.progressBar.setMaximum(value)
+        self.work_requested.emit(value)
 
+    def Cancel(self):
+        self.worker.end = True
+
+    def showOutput(self):
+        self.output_window.addimage(self.output,self.tempImg)
+
+    def UpdateProgressBar(self,value):
+        self.output_window.ui.progressBar.setValue(value)

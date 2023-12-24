@@ -59,6 +59,9 @@
          <layout class="QHBoxLayout" name="horizontalLayout_5">
           <item>
            <widget class="QSlider" name="horizontalSlider">
+            <property name="maximum">
+             <number>100</number>
+            </property>
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
@@ -73,6 +76,9 @@
           </item>
           <item>
            <widget class="QSlider" name="horizontalSlider_2">
+            <property name="maximum">
+             <number>100</number>
+            </property>
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
@@ -87,6 +93,9 @@
           </item>
           <item>
            <widget class="QSlider" name="horizontalSlider_3">
+            <property name="maximum">
+             <number>100</number>
+            </property>
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
@@ -101,6 +110,9 @@
           </item>
           <item>
            <widget class="QSlider" name="horizontalSlider_4">
+            <property name="maximum">
+             <number>100</number>
+            </property>
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
@@ -322,66 +334,22 @@
       <layout class="QHBoxLayout" name="horizontalLayout_4">
        <item>
         <widget class="QWidget" name="widget_5" native="true">
-         <layout class="QHBoxLayout" name="horizontalLayout_14">
-          <item>
-           <widget class="QLabel" name="changedImage1">
-            <property name="text">
-             <string/>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
-          </item>
-         </layout>
+         <layout class="QHBoxLayout" name="horizontalLayout_14"/>
         </widget>
        </item>
        <item>
         <widget class="QWidget" name="widget_6" native="true">
-         <layout class="QHBoxLayout" name="horizontalLayout_15">
-          <item>
-           <widget class="QLabel" name="changedImage2">
-            <property name="text">
-             <string/>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
-          </item>
-         </layout>
+         <layout class="QHBoxLayout" name="horizontalLayout_15"/>
         </widget>
        </item>
        <item>
         <widget class="QWidget" name="widget_7" native="true">
-         <layout class="QHBoxLayout" name="horizontalLayout_16">
-          <item>
-           <widget class="QLabel" name="changedImage3">
-            <property name="text">
-             <string/>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
-          </item>
-         </layout>
+         <layout class="QHBoxLayout" name="horizontalLayout_16"/>
         </widget>
        </item>
        <item>
         <widget class="QWidget" name="widget_8" native="true">
-         <layout class="QHBoxLayout" name="horizontalLayout_17">
-          <item>
-           <widget class="QLabel" name="changedImage4">
-            <property name="text">
-             <string/>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
-          </item>
-         </layout>
+         <layout class="QHBoxLayout" name="horizontalLayout_17"/>
         </widget>
        </item>
       </layout>
@@ -533,66 +501,22 @@
        </property>
        <item>
         <widget class="QWidget" name="widget" native="true">
-         <layout class="QHBoxLayout" name="horizontalLayout_9">
-          <item>
-           <widget class="QLabel" name="fixedImage1">
-            <property name="text">
-             <string/>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
-          </item>
-         </layout>
+         <layout class="QHBoxLayout" name="horizontalLayout_9"/>
         </widget>
        </item>
        <item>
         <widget class="QWidget" name="widget_2" native="true">
-         <layout class="QHBoxLayout" name="horizontalLayout_10">
-          <item>
-           <widget class="QLabel" name="fixedImage2">
-            <property name="text">
-             <string/>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
-          </item>
-         </layout>
+         <layout class="QHBoxLayout" name="horizontalLayout_10"/>
         </widget>
        </item>
        <item>
         <widget class="QWidget" name="widget_3" native="true">
-         <layout class="QHBoxLayout" name="horizontalLayout_11">
-          <item>
-           <widget class="QLabel" name="fixedImage3">
-            <property name="text">
-             <string/>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
-          </item>
-         </layout>
+         <layout class="QHBoxLayout" name="horizontalLayout_11"/>
         </widget>
        </item>
        <item>
         <widget class="QWidget" name="widget_4" native="true">
-         <layout class="QHBoxLayout" name="horizontalLayout_12">
-          <item>
-           <widget class="QLabel" name="fixedImage4">
-            <property name="text">
-             <string/>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
-          </item>
-         </layout>
+         <layout class="QHBoxLayout" name="horizontalLayout_12"/>
         </widget>
        </item>
       </layout>
