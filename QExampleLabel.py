@@ -29,6 +29,7 @@ class QExampleLabel (QLabel):
 
     def setImage (self,pixmap,img,grayscale_image):
         self.img = img
+        self.Qimg = QImage(img.path)
         self.grayscale_image = grayscale_image
         self.setPixmap(pixmap)
         self.croppedPixmap = pixmap
@@ -111,9 +112,15 @@ class QExampleLabel (QLabel):
         return cropped
 
     def changeBC(self):
-        Image = cv2.addWeighted(self.img, self.contrast, np.zeros(self.img.shape, self.img.dtype), self.brightness , 50)
+        self.Qimg.save('temp.jpg')
+        t = cv2.imread('temp.jpg')
+        os.remove('temp.jpg')
+        Image = cv2.addWeighted(t, self.contrast, t, self.brightness , 50)
+        cv2.imwrite('temp.jpg',Image)
+        img = QImage('temp.jpg')
+        os.remove('temp.jpg')
+        self.setPixmap(QPixmap.fromImage(img))
         self.BCchanged.emit(1)
-        return Image
 
 if __name__ == '__main__':
     myQApplication = QApplication(sys.argv)
