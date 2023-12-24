@@ -19,6 +19,7 @@ class QExampleLabel (QLabel):
         self.currentQRubberBand = None
         self.croppedPixmap = None
         self.img = None
+        self.grayscale_image = None
         self.flag = flag
         self.isContrast = False
         self.isBrightness = False
@@ -26,8 +27,9 @@ class QExampleLabel (QLabel):
         self.brightness = 0
         self.Rect = QRect(QPoint(0,0),QtCore.QSize())
 
-    def setImage (self,pixmap,img):
+    def setImage (self,pixmap,img,grayscale_image):
         self.img = img
+        self.grayscale_image = grayscale_image
         self.setPixmap(pixmap)
         self.croppedPixmap = pixmap
 
