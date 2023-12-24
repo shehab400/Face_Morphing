@@ -90,11 +90,20 @@ class MyWindow(QMainWindow):
         # self.ui.widget_4.mousePressEvent  = lambda event: self.removeImage(4,self.fixed4,self.changed4)
         #self.fixed1.mousePressEvent = lambda event: self.mousePressEvent(self.ui.fixedImage1)
 
-        self.ui.fixedImage1.mouseDoubleClickEvent =lambda event: self.imageDisplay(self.fixed1,self.changed1,self.ui.comboBox_1,1)
-        self.ui.fixedImage2.mouseDoubleClickEvent =lambda event: self.imageDisplay(self.fixed2,self.changed2,self.ui.comboBox_2,2)
-        self.ui.fixedImage3.mouseDoubleClickEvent =lambda event: self.imageDisplay(self.fixed3,self.changed3,self.ui.comboBox_3,3)
-        self.ui.fixedImage4.mouseDoubleClickEvent =lambda event: self.imageDisplay(self.fixed4,self.changed4,self.ui.comboBox_4,4)
+        self.fixed1.doubleClicked.connect(lambda event: self.imageDisplay(self.fixed1,self.changed1,self.ui.comboBox_1,1))
+        self.fixed2.doubleClicked.connect(lambda event: self.imageDisplay(self.fixed2,self.changed2,self.ui.comboBox_2,2))
+        self.fixed3.doubleClicked.connect(lambda event: self.imageDisplay(self.fixed3,self.changed3,self.ui.comboBox_3,3))
+        self.fixed4.doubleClicked.connect(lambda event: self.imageDisplay(self.fixed4,self.changed4,self.ui.comboBox_4,4))
         self.output_window.ui.pushButton.clicked.connect(self.Cancel)
+
+        self.fixed1.brightnessChanged.connect(lambda: self.UpdateBC(self.fixed1,1,self.ui.comboBox_1))
+        self.fixed2.brightnessChanged.connect(lambda: self.UpdateBC(self.fixed2,2,self.ui.comboBox_2))
+        self.fixed3.brightnessChanged.connect(lambda: self.UpdateBC(self.fixed3,3,self.ui.comboBox_3))
+        self.fixed4.brightnessChanged.connect(lambda: self.UpdateBC(self.fixed4,4,self.ui.comboBox_4))
+        self.fixed1.contrastChanged.connect(lambda: self.UpdateBC(self.fixed1,1,self.ui.comboBox_1))
+        self.fixed2.contrastChanged.connect(lambda: self.UpdateBC(self.fixed2,2,self.ui.comboBox_2))
+        self.fixed3.contrastChanged.connect(lambda: self.UpdateBC(self.fixed3,3,self.ui.comboBox_3))
+        self.fixed4.contrastChanged.connect(lambda: self.UpdateBC(self.fixed4,4,self.ui.comboBox_4))
 
         # for slider in [self.ui.horizontalSlider,self.ui.horizontalSlider_2,self.ui.horizontalSlider_3,self.ui.horizontalSlider_4]:
         #      slider.valueChanged.connect(lambda value, mode=mode: self.mixing(value))
@@ -120,6 +129,15 @@ class MyWindow(QMainWindow):
         count = 1 
         self.worker.end = False
         self.mixing()
+
+    def UpdateBC(self,Qlabel,imglabel,combobox):
+        Qlabel.Qimg.save('temp.jpg')
+        image,pixmap,grayscale_image = self.imageInitializer('temp.jpg',imglabel)
+        if os.path.exists('temp.jpg'):
+            os.remove('temp.jpg')
+        Images[imglabel-1] = image
+        self.croppedImages[imglabel-1] = image
+        self.updatingComboBox(combobox,imglabel)
 
     # def mousePressEvent(self,Qlabel):
     #     Qlabel.
@@ -170,13 +188,13 @@ class MyWindow(QMainWindow):
         # # Get imag
         img.imaginary = np.imag(img.fft)
         
-        return img,self.pixmap
+        return img,self.pixmap,grayscale_image
 
     def imageDisplay(self,Qlabel,Qlabel2,QComboBox,imglabel):
         filename = QtWidgets.QFileDialog.getOpenFileName()
         path = filename[0]
-        img,self.pixmap = self.imageInitializer(path,imglabel)
-        Qlabel.setImage(self.pixmap,img)
+        img,self.pixmap,grayscale_image = self.imageInitializer(path,imglabel)
+        Qlabel.setImage(self.pixmap,img,grayscale_image)
 
         Images[img.imagelabel-1] = img
         print(img.imagelabel)
@@ -206,7 +224,7 @@ class MyWindow(QMainWindow):
         elif self.Outer_radio.isChecked():
             self.isInner = False
             self.changed1.setIsCropable(True)
-        elif self.brightness_radio.isChecked():
+        if self.brightness_radio.isChecked():
             for fixed in [self.fixed1,self.fixed2,self.fixed3,self.fixed4]:
                 fixed.setIsBrightness(True)
         elif self.contrast_radio.isChecked():
@@ -258,7 +276,7 @@ class MyWindow(QMainWindow):
             plt.imsave('test.png',imaginary_part_normalized , cmap='gray')
             grayscale_image = QImage('test.png').convertToFormat(QImage.Format_Grayscale8) 
             filteredImages[img.imagelabel-1] = grayscale_image
-        Qlabel.setImage(QPixmap(grayscale_image),img)
+        Qlabel.setImage(QPixmap(grayscale_image),img,grayscale_image)
 
     def updatingComboBox(self,QComboBox,flag):
         component=QComboBox.currentText()
@@ -310,19 +328,19 @@ class MyWindow(QMainWindow):
         elif self.isInner == True or self.isInner == False:
             if Images[0].type!=0:
                 self.fixed1.getCropped(Rect)
-                img,pixmap = self.imageInitializer('output1.jpg',1)
+                img,pixmap,grayscale_image = self.imageInitializer('output1.jpg',1)
                 self.croppedImages[0]=img
             if Images[1].type!=0:
                 self.fixed2.getCropped(Rect)
-                img,pixmap = self.imageInitializer('output2.jpg',2)
+                img,pixmap,grayscale_image = self.imageInitializer('output2.jpg',2)
                 self.croppedImages[1]=img
             if Images[2].type!=0:
                 self.fixed3.getCropped(Rect)
-                img,pixmap = self.imageInitializer('output3.jpg',3)
+                img,pixmap,grayscale_image = self.imageInitializer('output3.jpg',3)
                 self.croppedImages[2]=img
             if Images[3].type!=0:
                 self.fixed4.getCropped(Rect)
-                img,pixmap = self.imageInitializer('output4.jpg',4)
+                img,pixmap,grayscale_image = self.imageInitializer('output4.jpg',4)
                 self.croppedImages[3]=img
         elif self.isInner == False:
             if Images[0].type!=0:
