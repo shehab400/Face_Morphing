@@ -1,14 +1,14 @@
 import sys
 from PyQt5 import QtGui, QtCore,QtWidgets
 from PyQt5.QtWidgets import QRubberBand, QLabel, QApplication, QWidget
-from PyQt5.QtGui import QMouseEvent, QPixmap,QImage
+from PyQt5.QtGui import QPixmap,QImage
 from PyQt5.QtCore import QRect,QPoint,pyqtSignal,pyqtSlot
 import cv2
+import numpy as np
 import os
 
 class QExampleLabel (QLabel):
-    brightnessChanged = pyqtSignal(int)
-    contrastChanged = pyqtSignal(int)
+    BCchanged = pyqtSignal(int)
     doubleClicked = pyqtSignal(int)
     @pyqtSlot(int)
 
@@ -19,7 +19,6 @@ class QExampleLabel (QLabel):
         self.currentQRubberBand = None
         self.croppedPixmap = None
         self.img = None
-        self.Qimg = None
         self.grayscale_image = None
         self.flag = flag
         self.isContrast = False
@@ -30,7 +29,6 @@ class QExampleLabel (QLabel):
 
     def setImage (self,pixmap,img,grayscale_image):
         self.img = img
-        self.Qimg = QImage(self.img.path)
         self.grayscale_image = grayscale_image
         self.setPixmap(pixmap)
         self.croppedPixmap = pixmap
@@ -84,84 +82,38 @@ class QExampleLabel (QLabel):
             self.SecondQPoint = eventQMouseEvent.pos()
             if self.isBrightness == True:
                 self.brightness = self.originQPoint.y() - self.SecondQPoint.y()
-                self.changeB()
+                self.changeBC()
             elif self.isContrast == True:
                 self.contrast = self.SecondQPoint.x() - self.originQPoint.x()
-                self.ChangeC()
+                self.changeBC()
+
 
     def mouseReleaseEvent (self, eventQMouseEvent):
+        if self.SecondQPoint == None:
+            self.SecondQPoint = self.originQPoint
         if self.isCropable == True:
             currentQRect = self.currentQRubberBand.geometry()
             self.Rect = currentQRect
             cropQPixmap = self.pixmap().copy(currentQRect)
             self.croppedPixmap = cropQPixmap
         elif self.isBrightness == True:
-            if self.SecondQPoint == None:
-                self.SecondQPoint = self.originQPoint
             self.brightness = self.originQPoint.y() - self.SecondQPoint.y()
-            self.changeB()
+            self.changeBC()
         elif self.isContrast == True:
-            if self.SecondQPoint == None:
-                self.SecondQPoint = self.originQPoint
             self.contrast = self.SecondQPoint.x() - self.originQPoint.x()
-            self.ChangeC()
+            self.changeBC()
 
     def getCropped(self,QRect):
-        original = QPixmap.fromImage(self.Qimg)
+        Image = QImage(self.img.path)
+        original = QPixmap.fromImage(Image)
         cropped = original.copy(QRect)
         cropped.save('output'+str(self.flag)+'.jpg')
         return cropped
 
-    def changeB(self):
-        src1 = self.qimg2cv(self.grayscale_image)
-        Image = self.change_brightness(src1,self.brightness)
-        cv2.imwrite("image_processed.jpg", Image)
-        self.setPixmap(QPixmap.fromImage(QImage('image_processed.jpg')))
-        if os.path.exists('image_processed.jpg'):
-            os.remove('image_processed.jpg')
-        src2 = self.qimg2cv(self.Qimg)
-        Image = self.change_brightness(src2,self.brightness)
-        cv2.imwrite("image_processed.jpg",Image)
-        self.Qimg = QImage('image_processed.jpg')
-        if os.path.exists('image_processed.jpg'):
-            os.remove('image_processed.jpg')
-        self.brightnessChanged.emit(1)
-
-    def change_brightness(self, img, value=0):
-        hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-        h, s, v = cv2.split(hsv)
-        v = cv2.add(v,int(value/10))
-        v[v > 255] = 255
-        v[v < 0] = 0
-        final_hsv = cv2.merge((h, s, v))
-        img = cv2.cvtColor(final_hsv, cv2.COLOR_HSV2BGR)
-        return img
-    
-    def ChangeC(self):
-        if self.contrast > 0:
-            self.contrast = (self.contrast / QtCore.QSize().width())+2
-        elif self.contrast < 0:
-            self.contrast = -self.contrast/QtCore.QSize().width()
-        src1 = self.qimg2cv(self.grayscale_image)
-        adjusted = cv2.convertScaleAbs(src1,self.contrast,0)
-        cv2.imwrite('image_processed.jpg',adjusted)
-        self.setPixmap(QPixmap.fromImage(QImage('image_processed.jpg')))
-        if os.path.exists('image_processed.jpg'):
-            os.remove('image_processed.jpg')
-        src2 = self.qimg2cv(self.Qimg)
-        adjusted = cv2.convertScaleAbs(src2,self.contrast,0)
-        cv2.imwrite('image_processed.jpg',adjusted)
-        self.Qimg = QImage('image_processed.jpg')
-        if os.path.exists('image_processed.jpg'):
-            os.remove('image_processed.jpg')
-        self.contrastChanged.emit(1)
-    
-    def qimg2cv(self, q_img):
-        q_img.save('temp.jpg', 'jpg')
-        mat = cv2.imread('temp.jpg')
-        if os.path.exists('temp.jpg'):
-            os.remove("temp.jpg")
-        return mat
+    def changeBC(self):
+        Image = cv2.addWeighted(self.img, self.contrast, np.zeros(self.img.shape, self.img.dtype), self.brightness , 50)
+        self.BCchanged.emit(1)
+        return Image
 
 if __name__ == '__main__':
     myQApplication = QApplication(sys.argv)

@@ -96,14 +96,10 @@ class MyWindow(QMainWindow):
         self.fixed4.doubleClicked.connect(lambda event: self.imageDisplay(self.fixed4,self.changed4,self.ui.comboBox_4,4))
         self.output_window.ui.pushButton.clicked.connect(self.Cancel)
 
-        self.fixed1.brightnessChanged.connect(lambda: self.UpdateBC(self.fixed1,1,self.ui.comboBox_1))
-        self.fixed2.brightnessChanged.connect(lambda: self.UpdateBC(self.fixed2,2,self.ui.comboBox_2))
-        self.fixed3.brightnessChanged.connect(lambda: self.UpdateBC(self.fixed3,3,self.ui.comboBox_3))
-        self.fixed4.brightnessChanged.connect(lambda: self.UpdateBC(self.fixed4,4,self.ui.comboBox_4))
-        self.fixed1.contrastChanged.connect(lambda: self.UpdateBC(self.fixed1,1,self.ui.comboBox_1))
-        self.fixed2.contrastChanged.connect(lambda: self.UpdateBC(self.fixed2,2,self.ui.comboBox_2))
-        self.fixed3.contrastChanged.connect(lambda: self.UpdateBC(self.fixed3,3,self.ui.comboBox_3))
-        self.fixed4.contrastChanged.connect(lambda: self.UpdateBC(self.fixed4,4,self.ui.comboBox_4))
+        self.fixed1.BCchanged.connect(lambda: self.UpdateBC(self.fixed1,1,self.ui.comboBox_1))
+        self.fixed2.BCchanged.connect(lambda: self.UpdateBC(self.fixed2,2,self.ui.comboBox_2))
+        self.fixed3.BCchanged.connect(lambda: self.UpdateBC(self.fixed3,3,self.ui.comboBox_3))
+        self.fixed4.BCchanged.connect(lambda: self.UpdateBC(self.fixed4,4,self.ui.comboBox_4))
 
         # for slider in [self.ui.horizontalSlider,self.ui.horizontalSlider_2,self.ui.horizontalSlider_3,self.ui.horizontalSlider_4]:
         #      slider.valueChanged.connect(lambda value, mode=mode: self.mixing(value))
@@ -131,13 +127,7 @@ class MyWindow(QMainWindow):
         self.mixing()
 
     def UpdateBC(self,Qlabel,imglabel,combobox):
-        Qlabel.Qimg.save('temp.jpg')
-        image,pixmap,grayscale_image = self.imageInitializer('temp.jpg',imglabel)
-        if os.path.exists('temp.jpg'):
-            os.remove('temp.jpg')
-        Images[imglabel-1] = image
-        self.croppedImages[imglabel-1] = image
-        self.updatingComboBox(combobox,imglabel)
+        pass
 
     # def mousePressEvent(self,Qlabel):
     #     Qlabel.
