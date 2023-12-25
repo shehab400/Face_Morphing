@@ -185,7 +185,9 @@ class MyWindow(QMainWindow):
         
         # # Fourier FFT
         img.fft = np.fft.fft2(img.raw_data)
+        img.fft=np.fft.fftshift(img.fft)
         # # Get magnitude
+        # img.magnitude = np.abs(img.fft)
         img.magnitude = np.abs(img.fft)
         # # Get phase
         img.phase = np.angle(img.fft)
@@ -469,15 +471,16 @@ class MyWindow(QMainWindow):
 
                 if np.max(np.angle(mixed_phase)) == 0:
                     
-                    avg_mixed_image = (mixed_magnitude)
+                    avg_mixed_image = np.fft.ifftshift(mixed_magnitude)
+                    
                     # normalized=(avg_mixed_image-np.min(avg_mixed_image))/(np.max(avg_mixed_image)-np.min(avg_mixed_image))
                     final_mixed_image = np.fft.ifft2(avg_mixed_image)
                 elif(np.max(mixed_magnitude==0)):
-                    avg_mixed_image = (mixed_phase)
+                    avg_mixed_image = np.fft.ifftshift(mixed_phase)
                     # normalized=(avg_mixed_image-np.min(avg_mixed_image))/(np.max(avg_mixed_image)-np.min(avg_mixed_image))
                     final_mixed_image = np.fft.ifft2(avg_mixed_image)
                 else:
-                    avg_mixed_image = (mixed_magnitude *  mixed_phase)
+                    avg_mixed_image = np.fft.ifftshift(mixed_magnitude *  mixed_phase)
                     # normalized=(avg_mixed_image-np.min(avg_mixed_image))/(np.max(avg_mixed_image)-np.min(avg_mixed_image))
                     final_mixed_image = np.fft.ifft2(avg_mixed_image)
                 if (np.max(final_mixed_image)>1):
@@ -512,7 +515,7 @@ class MyWindow(QMainWindow):
                     mixed_imaginary+=(1j* self.croppedImages[3].imaginary)* ratio4
                 
                     
-                avg_mixed_image = ( mixed_real + mixed_imaginary)
+                avg_mixed_image = np.fft.ifftshift( mixed_real + mixed_imaginary)
                 # normalized=(avg_mixed_image-np.min(avg_mixed_image))/(np.max(avg_mixed_image)-np.min(avg_mixed_image))
                 final_mixed_image = np.fft.ifft2(avg_mixed_image)
             
