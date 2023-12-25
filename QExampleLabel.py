@@ -10,6 +10,7 @@ import os
 class QExampleLabel (QLabel):
     BCchanged = pyqtSignal(int)
     doubleClicked = pyqtSignal(int)
+    RubberBandChanged = pyqtSignal(int)
     @pyqtSlot(int)
 
     def __init__(self, parentQWidget = None,flag = 0):
@@ -95,6 +96,7 @@ class QExampleLabel (QLabel):
         if self.isCropable == True:
             currentQRect = self.currentQRubberBand.geometry()
             self.Rect = currentQRect
+            self.RubberBandChanged.emit(1)
             cropQPixmap = self.pixmap().copy(currentQRect)
             self.croppedPixmap = cropQPixmap
         elif self.isBrightness == True:
@@ -105,11 +107,18 @@ class QExampleLabel (QLabel):
             self.changeBC()
 
     def getCropped(self,QRect):
-        Image = QImage(self.img.path)
+        Image = self.pixmap().toImage()
         original = QPixmap.fromImage(Image)
         cropped = original.copy(QRect)
         cropped.save('output'+str(self.flag)+'.jpg')
         return cropped
+    
+    def showRubberBand(self,Rect):
+        if self.currentQRubberBand != None:
+            self.currentQRubberBand.hide()
+        self.currentQRubberBand = QRubberBand(QRubberBand.Rectangle, self)
+        self.currentQRubberBand.setGeometry(Rect)
+        self.currentQRubberBand.show()
 
     def changeBC(self):
         self.Qimg.save('temp.jpg')
