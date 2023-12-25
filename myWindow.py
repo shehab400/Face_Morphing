@@ -488,7 +488,7 @@ class MyWindow(QMainWindow):
                         
             elif(mode=='real-imag'):
                 
-                mixed_imaginary= np.zeros_like(self.croppedImages[0].imaginary)
+                mixed_imaginary= np.zeros_like(self.croppedImages[0].imaginary,dtype=np.complex128)
                 mixed_real = np.ones_like(self.croppedImages[0].real)
                 if self.ui.comboBox_1.currentText()=="Real":
                     mixed_real =self.croppedImages[0].real * ratio1
