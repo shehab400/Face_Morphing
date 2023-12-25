@@ -115,6 +115,7 @@ class MyWindow(QMainWindow):
         self.Outer_radio.toggled.connect(self.PhotoAdjustment)
         self.contrast_radio.toggled.connect(self.PhotoAdjustment)
         self.brightness_radio.toggled.connect(self.PhotoAdjustment)
+        self.changed1.RubberBandChanged.connect(self.UpdateRubberBands)
 
 
         self.output = 1
@@ -134,6 +135,13 @@ class MyWindow(QMainWindow):
 
     def UpdateBC(self,Qlabel,imglabel,combobox):
         pass
+
+    def UpdateRubberBands(self):
+        Rect = self.changed1.Rect
+        self.changed2.showRubberBand(Rect)
+        self.changed3.showRubberBand(Rect)
+        self.changed4.showRubberBand(Rect)
+        
 
     # def mousePressEvent(self,Qlabel):
     #     Qlabel.
