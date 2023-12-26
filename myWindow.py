@@ -56,7 +56,7 @@ class MyWindow(QMainWindow):
             Qlabelsfixed.append(label)
         for fixed in [self.fixed1,self.fixed2,self.fixed3,self.fixed4]:
             fixed.setIsBrightness(True)
-        self.output_window = OutputWindow()
+        # self.output_window = OutputWindow()
         self.ui.applyButton.clicked.connect(self.open_output_window)
         self.ui.widget.layout().addWidget(self.fixed1)
         self.ui.widget_2.layout().addWidget(self.fixed2)
@@ -100,7 +100,7 @@ class MyWindow(QMainWindow):
         self.fixed2.doubleClicked.connect(lambda event: self.imageDisplay(self.fixed2,self.changed2,self.ui.comboBox_2,2))
         self.fixed3.doubleClicked.connect(lambda event: self.imageDisplay(self.fixed3,self.changed3,self.ui.comboBox_3,3))
         self.fixed4.doubleClicked.connect(lambda event: self.imageDisplay(self.fixed4,self.changed4,self.ui.comboBox_4,4))
-        self.output_window.ui.pushButton.clicked.connect(self.Cancel)
+        # self.output_window.ui.pushButton.clicked.connect(self.Cancel)
 
         self.fixed1.BCchanged.connect(lambda: self.UpdateBC(self.fixed1,1,self.ui.comboBox_1))
         self.fixed2.BCchanged.connect(lambda: self.UpdateBC(self.fixed2,2,self.ui.comboBox_2))
@@ -127,11 +127,20 @@ class MyWindow(QMainWindow):
         global count
         # Create a new instance of the output window
             # Show the output window
-        self.output_window.ui.progressBar.setValue(0)
-        self.output_window.show()
+        self.ui.progressBar.setValue(0)
+        # self.output_window.ui.progressBar.setValue(0)
+        # self.output_window.show()
         count = 1 
         self.worker.end = False
         self.mixing()
+        
+    def addImageInMain(self,key,QImage):
+        if key == 1:
+            self.ui.output_1.clear()
+            self.ui.output_1.setPixmap(QPixmap(QImage))
+        elif key == 2:
+            self.ui.output_2.clear()
+            self.ui.output_2.setPixmap(QPixmap(QImage))
 
     def UpdateBC(self,Qlabel,imglabel,combobox):
         pass
@@ -528,14 +537,17 @@ class MyWindow(QMainWindow):
         self.Progressing(5)
 
     def Progressing(self,value):
-        self.output_window.ui.progressBar.setMaximum(value)
+        self.ui.progressBar.setMaximum(value)
+        # self.output_window.ui.progressBar.setMaximum(value)
         self.work_requested.emit(value)
 
     def Cancel(self):
         self.worker.end = True
 
     def showOutput(self):
-        self.output_window.addimage(self.output,self.tempImg)
+        self.addImageInMain(self.output,self.tempImg)
+        # self.output_window.addimage(self.output,self.tempImg)
 
     def UpdateProgressBar(self,value):
-        self.output_window.ui.progressBar.setValue(value)
+        self.ui.progressBar.setValue(value)
+        # self.output_window.ui.progressBar.setValue(value)
