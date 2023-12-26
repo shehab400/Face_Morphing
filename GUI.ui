@@ -203,23 +203,207 @@
       </property>
       <layout class="QHBoxLayout" name="horizontalLayout_4">
        <item>
-        <widget class="QWidget" name="widget_5" native="true">
-         <layout class="QHBoxLayout" name="horizontalLayout_14"/>
+        <widget class="QFrame" name="frame_24">
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_10">
+          <item>
+           <widget class="QWidget" name="widget_5" native="true">
+            <layout class="QHBoxLayout" name="horizontalLayout_14"/>
+           </widget>
+          </item>
+          <item>
+           <widget class="QFrame" name="frame_25">
+            <property name="frameShape">
+             <enum>QFrame::StyledPanel</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Raised</enum>
+            </property>
+            <layout class="QHBoxLayout" name="horizontalLayout_2">
+             <item>
+              <widget class="QSlider" name="horizontalSlider">
+               <property name="maximum">
+                <number>100</number>
+               </property>
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="label_6">
+               <property name="font">
+                <font>
+                 <pointsize>10</pointsize>
+                </font>
+               </property>
+               <property name="text">
+                <string>TextLabel</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+         </layout>
         </widget>
        </item>
        <item>
-        <widget class="QWidget" name="widget_6" native="true">
-         <layout class="QHBoxLayout" name="horizontalLayout_15"/>
+        <widget class="QFrame" name="frame_26">
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_11">
+          <item>
+           <widget class="QWidget" name="widget_6" native="true">
+            <layout class="QHBoxLayout" name="horizontalLayout_15"/>
+           </widget>
+          </item>
+          <item>
+           <widget class="QFrame" name="frame_27">
+            <property name="frameShape">
+             <enum>QFrame::StyledPanel</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Raised</enum>
+            </property>
+            <layout class="QHBoxLayout" name="horizontalLayout_20">
+             <item>
+              <widget class="QSlider" name="horizontalSlider_2">
+               <property name="maximum">
+                <number>100</number>
+               </property>
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="label_7">
+               <property name="font">
+                <font>
+                 <pointsize>10</pointsize>
+                </font>
+               </property>
+               <property name="text">
+                <string>TextLabel</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+         </layout>
         </widget>
        </item>
        <item>
-        <widget class="QWidget" name="widget_7" native="true">
-         <layout class="QHBoxLayout" name="horizontalLayout_16"/>
+        <widget class="QFrame" name="frame_28">
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_12">
+          <item>
+           <widget class="QWidget" name="widget_7" native="true">
+            <layout class="QHBoxLayout" name="horizontalLayout_16"/>
+           </widget>
+          </item>
+          <item>
+           <widget class="QFrame" name="frame_29">
+            <property name="frameShape">
+             <enum>QFrame::StyledPanel</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Raised</enum>
+            </property>
+            <layout class="QHBoxLayout" name="horizontalLayout_21">
+             <item>
+              <widget class="QSlider" name="horizontalSlider_3">
+               <property name="maximum">
+                <number>100</number>
+               </property>
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="label_8">
+               <property name="font">
+                <font>
+                 <pointsize>10</pointsize>
+                </font>
+               </property>
+               <property name="text">
+                <string>TextLabel</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+         </layout>
         </widget>
        </item>
        <item>
-        <widget class="QWidget" name="widget_8" native="true">
-         <layout class="QHBoxLayout" name="horizontalLayout_17"/>
+        <widget class="QFrame" name="frame_30">
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_13">
+          <item>
+           <widget class="QWidget" name="widget_8" native="true">
+            <layout class="QHBoxLayout" name="horizontalLayout_17"/>
+           </widget>
+          </item>
+          <item>
+           <widget class="QFrame" name="frame_31">
+            <property name="frameShape">
+             <enum>QFrame::StyledPanel</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Raised</enum>
+            </property>
+            <layout class="QHBoxLayout" name="horizontalLayout_22">
+             <item>
+              <widget class="QSlider" name="horizontalSlider_4">
+               <property name="maximum">
+                <number>100</number>
+               </property>
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="label_9">
+               <property name="font">
+                <font>
+                 <pointsize>10</pointsize>
+                </font>
+               </property>
+               <property name="text">
+                <string>TextLabel</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+         </layout>
         </widget>
        </item>
       </layout>
@@ -243,135 +427,77 @@
           <enum>QFrame::Raised</enum>
          </property>
          <layout class="QGridLayout" name="gridLayout_4">
-          <item row="0" column="0">
-           <widget class="QFrame" name="frame_8">
+          <item row="1" column="0">
+           <widget class="QFrame" name="frame_13">
             <property name="frameShape">
              <enum>QFrame::StyledPanel</enum>
             </property>
             <property name="frameShadow">
              <enum>QFrame::Raised</enum>
             </property>
-            <layout class="QVBoxLayout" name="verticalLayout">
-             <item alignment="Qt::AlignBottom">
-              <widget class="QFrame" name="frame_9">
-               <property name="frameShape">
-                <enum>QFrame::StyledPanel</enum>
+            <layout class="QGridLayout" name="gridLayout_3">
+             <item row="0" column="0">
+              <widget class="QLabel" name="label_11">
+               <property name="font">
+                <font>
+                 <pointsize>16</pointsize>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                </font>
                </property>
-               <property name="frameShadow">
-                <enum>QFrame::Raised</enum>
+               <property name="text">
+                <string>Choose Output Window</string>
                </property>
-               <layout class="QGridLayout" name="gridLayout_2">
-                <item row="0" column="0" alignment="Qt::AlignBottom">
-                 <widget class="QLabel" name="label_5">
-                  <property name="font">
-                   <font>
-                    <pointsize>16</pointsize>
-                    <weight>75</weight>
-                    <bold>true</bold>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>Weigth Sliders</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
               </widget>
              </item>
-             <item alignment="Qt::AlignBottom">
-              <widget class="QFrame" name="frame_7">
+             <item row="1" column="0">
+              <widget class="QFrame" name="frame_18">
                <property name="frameShape">
                 <enum>QFrame::StyledPanel</enum>
                </property>
                <property name="frameShadow">
                 <enum>QFrame::Raised</enum>
                </property>
-               <layout class="QHBoxLayout" name="horizontalLayout_5">
+               <layout class="QHBoxLayout" name="horizontalLayout_6">
                 <item>
-                 <widget class="QSlider" name="horizontalSlider">
-                  <property name="maximum">
-                   <number>100</number>
-                  </property>
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLabel" name="label_6">
+                 <widget class="QRadioButton" name="radioButton">
                   <property name="font">
                    <font>
-                    <pointsize>10</pointsize>
+                    <pointsize>14</pointsize>
                    </font>
                   </property>
                   <property name="text">
-                   <string>TextLabel</string>
+                   <string>Output 1</string>
                   </property>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QSlider" name="horizontalSlider_2">
-                  <property name="maximum">
-                   <number>100</number>
-                  </property>
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLabel" name="label_7">
+                 <widget class="QRadioButton" name="radioButton_2">
                   <property name="font">
                    <font>
-                    <pointsize>10</pointsize>
+                    <pointsize>14</pointsize>
                    </font>
                   </property>
                   <property name="text">
-                   <string>TextLabel</string>
+                   <string>Output 2</string>
                   </property>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QSlider" name="horizontalSlider_3">
-                  <property name="maximum">
-                   <number>100</number>
+                 <widget class="QPushButton" name="applyButton">
+                  <property name="maximumSize">
+                   <size>
+                    <width>226</width>
+                    <height>16777215</height>
+                   </size>
                   </property>
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLabel" name="label_8">
                   <property name="font">
                    <font>
-                    <pointsize>10</pointsize>
+                    <pointsize>12</pointsize>
                    </font>
                   </property>
                   <property name="text">
-                   <string>TextLabel</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QSlider" name="horizontalSlider_4">
-                  <property name="maximum">
-                   <number>100</number>
-                  </property>
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLabel" name="label_9">
-                  <property name="font">
-                   <font>
-                    <pointsize>10</pointsize>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>TextLabel</string>
+                   <string>Apply</string>
                   </property>
                  </widget>
                 </item>
@@ -381,143 +507,69 @@
             </layout>
            </widget>
           </item>
-          <item row="1" column="0">
-           <widget class="QFrame" name="frame_6">
+          <item row="0" column="0">
+           <widget class="QFrame" name="frame_14">
             <property name="frameShape">
              <enum>QFrame::StyledPanel</enum>
             </property>
             <property name="frameShadow">
              <enum>QFrame::Raised</enum>
             </property>
-            <layout class="QVBoxLayout" name="verticalLayout_4">
+            <layout class="QHBoxLayout" name="horizontalLayout_8">
              <item>
-              <widget class="QFrame" name="frame_14">
+              <widget class="QFrame" name="frame_5">
                <property name="frameShape">
                 <enum>QFrame::StyledPanel</enum>
                </property>
                <property name="frameShadow">
                 <enum>QFrame::Raised</enum>
                </property>
-               <layout class="QHBoxLayout" name="horizontalLayout_8">
+               <layout class="QVBoxLayout" name="verticalLayout_3">
                 <item>
-                 <widget class="QFrame" name="frame_5">
-                  <property name="frameShape">
-                   <enum>QFrame::StyledPanel</enum>
+                 <widget class="QLabel" name="label_10">
+                  <property name="font">
+                   <font>
+                    <pointsize>16</pointsize>
+                    <weight>75</weight>
+                    <bold>true</bold>
+                   </font>
                   </property>
-                  <property name="frameShadow">
-                   <enum>QFrame::Raised</enum>
+                  <property name="text">
+                   <string>Region Mixer</string>
                   </property>
-                  <layout class="QVBoxLayout" name="verticalLayout_3">
-                   <item>
-                    <widget class="QLabel" name="label_10">
-                     <property name="font">
-                      <font>
-                       <pointsize>16</pointsize>
-                       <weight>75</weight>
-                       <bold>true</bold>
-                      </font>
-                     </property>
-                     <property name="text">
-                      <string>Region Mixer</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QFrame" name="frame_10">
-                     <property name="frameShape">
-                      <enum>QFrame::StyledPanel</enum>
-                     </property>
-                     <property name="frameShadow">
-                      <enum>QFrame::Raised</enum>
-                     </property>
-                     <layout class="QHBoxLayout" name="horizontalLayout_7">
-                      <item>
-                       <widget class="QRadioButton" name="Inner_radio">
-                        <property name="font">
-                         <font>
-                          <pointsize>14</pointsize>
-                         </font>
-                        </property>
-                        <property name="text">
-                         <string>Inner Region</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item>
-                       <widget class="QRadioButton" name="Outer_radio">
-                        <property name="font">
-                         <font>
-                          <pointsize>14</pointsize>
-                         </font>
-                        </property>
-                        <property name="text">
-                         <string>Outer Region</string>
-                        </property>
-                       </widget>
-                      </item>
-                     </layout>
-                    </widget>
-                   </item>
-                  </layout>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QFrame" name="frame_11">
+                 <widget class="QFrame" name="frame_10">
                   <property name="frameShape">
                    <enum>QFrame::StyledPanel</enum>
                   </property>
                   <property name="frameShadow">
                    <enum>QFrame::Raised</enum>
                   </property>
-                  <layout class="QVBoxLayout" name="verticalLayout_2">
+                  <layout class="QHBoxLayout" name="horizontalLayout_7">
                    <item>
-                    <widget class="QLabel" name="label_12">
+                    <widget class="QRadioButton" name="Inner_radio">
                      <property name="font">
                       <font>
-                       <pointsize>16</pointsize>
-                       <weight>75</weight>
-                       <bold>true</bold>
+                       <pointsize>14</pointsize>
                       </font>
                      </property>
                      <property name="text">
-                      <string>Brightness/Contrast</string>
+                      <string>Inner Region</string>
                      </property>
                     </widget>
                    </item>
                    <item>
-                    <widget class="QFrame" name="frame_12">
-                     <property name="frameShape">
-                      <enum>QFrame::StyledPanel</enum>
+                    <widget class="QRadioButton" name="Outer_radio">
+                     <property name="font">
+                      <font>
+                       <pointsize>14</pointsize>
+                      </font>
                      </property>
-                     <property name="frameShadow">
-                      <enum>QFrame::Raised</enum>
+                     <property name="text">
+                      <string>Outer Region</string>
                      </property>
-                     <layout class="QHBoxLayout" name="horizontalLayout_18">
-                      <item>
-                       <widget class="QRadioButton" name="brightness_radio">
-                        <property name="font">
-                         <font>
-                          <pointsize>14</pointsize>
-                         </font>
-                        </property>
-                        <property name="text">
-                         <string>Brightness</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item>
-                       <widget class="QRadioButton" name="contrast_radio">
-                        <property name="font">
-                         <font>
-                          <pointsize>14</pointsize>
-                         </font>
-                        </property>
-                        <property name="text">
-                         <string>Contrast</string>
-                        </property>
-                       </widget>
-                      </item>
-                     </layout>
                     </widget>
                    </item>
                   </layout>
@@ -527,16 +579,16 @@
               </widget>
              </item>
              <item>
-              <widget class="QFrame" name="frame_13">
+              <widget class="QFrame" name="frame_11">
                <property name="frameShape">
                 <enum>QFrame::StyledPanel</enum>
                </property>
                <property name="frameShadow">
                 <enum>QFrame::Raised</enum>
                </property>
-               <layout class="QGridLayout" name="gridLayout_3">
-                <item row="0" column="0">
-                 <widget class="QLabel" name="label_11">
+               <layout class="QVBoxLayout" name="verticalLayout_2">
+                <item>
+                 <widget class="QLabel" name="label_12">
                   <property name="font">
                    <font>
                     <pointsize>16</pointsize>
@@ -545,58 +597,40 @@
                    </font>
                   </property>
                   <property name="text">
-                   <string>Choose Output Window</string>
+                   <string>Brightness/Contrast</string>
                   </property>
                  </widget>
                 </item>
-                <item row="1" column="0">
-                 <widget class="QFrame" name="frame_18">
+                <item>
+                 <widget class="QFrame" name="frame_12">
                   <property name="frameShape">
                    <enum>QFrame::StyledPanel</enum>
                   </property>
                   <property name="frameShadow">
                    <enum>QFrame::Raised</enum>
                   </property>
-                  <layout class="QHBoxLayout" name="horizontalLayout_6">
+                  <layout class="QHBoxLayout" name="horizontalLayout_18">
                    <item>
-                    <widget class="QRadioButton" name="radioButton">
+                    <widget class="QRadioButton" name="brightness_radio">
                      <property name="font">
                       <font>
                        <pointsize>14</pointsize>
                       </font>
                      </property>
                      <property name="text">
-                      <string>Output 1</string>
+                      <string>Brightness</string>
                      </property>
                     </widget>
                    </item>
                    <item>
-                    <widget class="QRadioButton" name="radioButton_2">
+                    <widget class="QRadioButton" name="contrast_radio">
                      <property name="font">
                       <font>
                        <pointsize>14</pointsize>
                       </font>
                      </property>
                      <property name="text">
-                      <string>Output 2</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QPushButton" name="applyButton">
-                     <property name="maximumSize">
-                      <size>
-                       <width>226</width>
-                       <height>16777215</height>
-                      </size>
-                     </property>
-                     <property name="font">
-                      <font>
-                       <pointsize>12</pointsize>
-                      </font>
-                     </property>
-                     <property name="text">
-                      <string>Apply</string>
+                      <string>Contrast</string>
                      </property>
                     </widget>
                    </item>
