@@ -123,10 +123,11 @@ class QExampleLabel (QLabel):
     def changeBC(self):
         self.Qimg.save('temp.jpg')
         t = cv2.imread('temp.jpg')
+        t2 = np.float32(t/255)
         os.remove('temp.jpg')
-        Image = cv2.addWeighted(t, self.contrast, t, self.brightness , 50)
+        Image = cv2.addWeighted(t2, self.contrast, t2, self.brightness , 50)
         cv2.imwrite('temp.jpg',Image)
-        img = QImage('temp.jpg')
+        img = QImage('temp.jpg').convertToFormat(QImage.Format_Grayscale8)
         os.remove('temp.jpg')
         self.setPixmap(QPixmap.fromImage(img))
         self.BCchanged.emit(1)
