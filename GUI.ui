@@ -44,6 +44,8 @@
             <property name="font">
              <font>
               <pointsize>12</pointsize>
+              <weight>75</weight>
+              <bold>true</bold>
              </font>
             </property>
             <property name="text">
@@ -76,6 +78,8 @@
             <property name="font">
              <font>
               <pointsize>12</pointsize>
+              <weight>75</weight>
+              <bold>true</bold>
              </font>
             </property>
             <property name="text">
@@ -108,6 +112,8 @@
             <property name="font">
              <font>
               <pointsize>12</pointsize>
+              <weight>75</weight>
+              <bold>true</bold>
              </font>
             </property>
             <property name="text">
@@ -140,6 +146,8 @@
             <property name="font">
              <font>
               <pointsize>12</pointsize>
+              <weight>75</weight>
+              <bold>true</bold>
              </font>
             </property>
             <property name="text">
@@ -257,7 +265,9 @@
                  <widget class="QLabel" name="label_5">
                   <property name="font">
                    <font>
-                    <pointsize>12</pointsize>
+                    <pointsize>16</pointsize>
+                    <weight>75</weight>
+                    <bold>true</bold>
                    </font>
                   </property>
                   <property name="text">
@@ -289,6 +299,11 @@
                 </item>
                 <item>
                  <widget class="QLabel" name="label_6">
+                  <property name="font">
+                   <font>
+                    <pointsize>10</pointsize>
+                   </font>
+                  </property>
                   <property name="text">
                    <string>TextLabel</string>
                   </property>
@@ -306,6 +321,11 @@
                 </item>
                 <item>
                  <widget class="QLabel" name="label_7">
+                  <property name="font">
+                   <font>
+                    <pointsize>10</pointsize>
+                   </font>
+                  </property>
                   <property name="text">
                    <string>TextLabel</string>
                   </property>
@@ -323,6 +343,11 @@
                 </item>
                 <item>
                  <widget class="QLabel" name="label_8">
+                  <property name="font">
+                   <font>
+                    <pointsize>10</pointsize>
+                   </font>
+                  </property>
                   <property name="text">
                    <string>TextLabel</string>
                   </property>
@@ -340,6 +365,11 @@
                 </item>
                 <item>
                  <widget class="QLabel" name="label_9">
+                  <property name="font">
+                   <font>
+                    <pointsize>10</pointsize>
+                   </font>
+                  </property>
                   <property name="text">
                    <string>TextLabel</string>
                   </property>
@@ -382,7 +412,9 @@
                     <widget class="QLabel" name="label_10">
                      <property name="font">
                       <font>
-                       <pointsize>12</pointsize>
+                       <pointsize>16</pointsize>
+                       <weight>75</weight>
+                       <bold>true</bold>
                       </font>
                      </property>
                      <property name="text">
@@ -401,6 +433,11 @@
                      <layout class="QHBoxLayout" name="horizontalLayout_7">
                       <item>
                        <widget class="QRadioButton" name="Inner_radio">
+                        <property name="font">
+                         <font>
+                          <pointsize>14</pointsize>
+                         </font>
+                        </property>
                         <property name="text">
                          <string>Inner Region</string>
                         </property>
@@ -408,6 +445,11 @@
                       </item>
                       <item>
                        <widget class="QRadioButton" name="Outer_radio">
+                        <property name="font">
+                         <font>
+                          <pointsize>14</pointsize>
+                         </font>
+                        </property>
                         <property name="text">
                          <string>Outer Region</string>
                         </property>
@@ -432,7 +474,9 @@
                     <widget class="QLabel" name="label_12">
                      <property name="font">
                       <font>
-                       <pointsize>12</pointsize>
+                       <pointsize>16</pointsize>
+                       <weight>75</weight>
+                       <bold>true</bold>
                       </font>
                      </property>
                      <property name="text">
@@ -451,6 +495,11 @@
                      <layout class="QHBoxLayout" name="horizontalLayout_18">
                       <item>
                        <widget class="QRadioButton" name="brightness_radio">
+                        <property name="font">
+                         <font>
+                          <pointsize>14</pointsize>
+                         </font>
+                        </property>
                         <property name="text">
                          <string>Brightness</string>
                         </property>
@@ -458,6 +507,11 @@
                       </item>
                       <item>
                        <widget class="QRadioButton" name="contrast_radio">
+                        <property name="font">
+                         <font>
+                          <pointsize>14</pointsize>
+                         </font>
+                        </property>
                         <property name="text">
                          <string>Contrast</string>
                         </property>
@@ -485,7 +539,9 @@
                  <widget class="QLabel" name="label_11">
                   <property name="font">
                    <font>
-                    <pointsize>12</pointsize>
+                    <pointsize>16</pointsize>
+                    <weight>75</weight>
+                    <bold>true</bold>
                    </font>
                   </property>
                   <property name="text">
@@ -504,6 +560,11 @@
                   <layout class="QHBoxLayout" name="horizontalLayout_6">
                    <item>
                     <widget class="QRadioButton" name="radioButton">
+                     <property name="font">
+                      <font>
+                       <pointsize>14</pointsize>
+                      </font>
+                     </property>
                      <property name="text">
                       <string>Output 1</string>
                      </property>
@@ -511,6 +572,11 @@
                    </item>
                    <item>
                     <widget class="QRadioButton" name="radioButton_2">
+                     <property name="font">
+                      <font>
+                       <pointsize>14</pointsize>
+                      </font>
+                     </property>
                      <property name="text">
                       <string>Output 2</string>
                      </property>
@@ -566,6 +632,13 @@
             <layout class="QHBoxLayout" name="horizontalLayout_19">
              <item alignment="Qt::AlignHCenter|Qt::AlignTop">
               <widget class="QLabel" name="label_13">
+               <property name="font">
+                <font>
+                 <pointsize>14</pointsize>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                </font>
+               </property>
                <property name="text">
                 <string>Output 1</string>
                </property>
@@ -573,6 +646,13 @@
              </item>
              <item alignment="Qt::AlignHCenter|Qt::AlignTop">
               <widget class="QLabel" name="label_14">
+               <property name="font">
+                <font>
+                 <pointsize>14</pointsize>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                </font>
+               </property>
                <property name="text">
                 <string>Output 2</string>
                </property>
@@ -592,6 +672,9 @@
                   <property name="text">
                    <string/>
                   </property>
+                  <property name="alignment">
+                   <set>Qt::AlignCenter</set>
+                  </property>
                  </widget>
                 </item>
                </layout>
@@ -604,6 +687,9 @@
                  <widget class="QLabel" name="output_2">
                   <property name="text">
                    <string/>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignCenter</set>
                   </property>
                  </widget>
                 </item>

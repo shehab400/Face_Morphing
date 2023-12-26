@@ -49,6 +49,14 @@ class MyWindow(QMainWindow):
         self.changed2 = QExampleLabel(self,2)
         self.changed3 = QExampleLabel(self,3)
         self.changed4 = QExampleLabel(self,4)
+        self.fixed1.setAlignment(QtCore.Qt.AlignCenter)
+        self.fixed2.setAlignment(QtCore.Qt.AlignCenter)
+        self.fixed3.setAlignment(QtCore.Qt.AlignCenter)
+        self.fixed4.setAlignment(QtCore.Qt.AlignCenter)
+        self.changed1.setAlignment(QtCore.Qt.AlignCenter)
+        self.changed2.setAlignment(QtCore.Qt.AlignCenter)
+        self.changed3.setAlignment(QtCore.Qt.AlignCenter)
+        self.changed4.setAlignment(QtCore.Qt.AlignCenter)
         self.minHeight = 10000
         self.minWidth = 10000
         self.changed1.setIsCropable(True)
