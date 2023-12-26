@@ -13,6 +13,7 @@ from QExampleLabel import *
 from outputWindow import *
 import time
 from Worker import *
+from scipy.fft import fft2 , fftshift
 
 count = 0
 
