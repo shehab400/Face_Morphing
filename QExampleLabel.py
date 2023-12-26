@@ -20,17 +20,20 @@ class QExampleLabel (QLabel):
         self.currentQRubberBand = None
         self.croppedPixmap = None
         self.img = None
+        self.Qimg = None
+        self.originalQimg = None
         self.grayscale_image = None
         self.flag = flag
         self.isContrast = False
         self.isBrightness = False
-        self.contrast = 0
+        self.contrast = 1
         self.brightness = 0
         self.Rect = QRect(QPoint(0,0),QtCore.QSize())
 
     def setImage (self,pixmap,img,grayscale_image):
         self.img = img
         self.Qimg = QImage(img.path)
+        self.originalQimg = QImage(img.path)
         self.grayscale_image = grayscale_image
         self.setPixmap(pixmap)
         self.croppedPixmap = pixmap
@@ -107,7 +110,7 @@ class QExampleLabel (QLabel):
             self.changeBC()
 
     def getCropped(self,QRect):
-        Image = self.pixmap().toImage()
+        Image = self.Qimg
         original = QPixmap.fromImage(Image)
         cropped = original.copy(QRect)
         cropped.save('output'+str(self.flag)+'.jpg')
@@ -121,16 +124,33 @@ class QExampleLabel (QLabel):
         self.currentQRubberBand.show()
 
     def changeBC(self):
-        self.Qimg.save('temp.jpg')
-        t = cv2.imread('temp.jpg')
-        t2 = np.float32(t/255)
-        os.remove('temp.jpg')
-        Image = cv2.addWeighted(t2, self.contrast, t2, self.brightness , 50)
+        if self.contrast == 0:
+            self.contrast = 1
+        elif self.contrast > 1:
+            self.contrast = self.contrast / 10
+        elif self.contrast < 0:
+            self.contrast = 10/abs(self.contrast)
+        t = self.qimg2cv(self.grayscale_image)
+        Image = cv2.addWeighted(t, self.contrast, t, 0, self.brightness)
         cv2.imwrite('temp.jpg',Image)
-        img = QImage('temp.jpg').convertToFormat(QImage.Format_Grayscale8)
-        os.remove('temp.jpg')
+        img = QImage('temp.jpg')
         self.setPixmap(QPixmap.fromImage(img))
+        if os.path.exists('temp.jpg'):
+            os.remove('temp.jpg')
+        t2 = self.qimg2cv(self.originalQimg)
+        Image2 = cv2.addWeighted(t2, self.contrast, t2, 0, self.brightness)
+        cv2.imwrite('temp.jpg',Image2)
+        self.Qimg = QImage('temp.jpg')
+        if os.path.exists('temp.jpg'):
+            os.remove('temp.jpg')
         self.BCchanged.emit(1)
+
+    def qimg2cv(self, q_img):
+        q_img.save('temp.jpg', 'jpg')
+        mat = cv2.imread('temp.jpg')
+        if os.path.exists('temp.jpg'):
+            os.remove("temp.jpg")
+        return mat
 
 if __name__ == '__main__':
     myQApplication = QApplication(sys.argv)

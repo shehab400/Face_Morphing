@@ -152,7 +152,10 @@ class MyWindow(QMainWindow):
             self.ui.output_2.setPixmap(QPixmap(QImage))
 
     def UpdateBC(self,Qlabel,imglabel,combobox):
-        pass
+        img = self.QImgtoImage(Qlabel.Qimg,imglabel)
+        Images[imglabel-1] = img
+        self.updatingComboBox(combobox,imglabel)
+        self.croppedImages = Images.copy()
 
     def UpdateRubberBands(self):
         Rect = self.changed1.Rect
@@ -241,6 +244,7 @@ class MyWindow(QMainWindow):
                 label.setImage(pixmap,image,image.grayscale)
                 original = QPixmap.fromImage(image.original_image).scaled(self.minWidth, self.minHeight)
                 Qimg = original.toImage()
+                label.Qimg = Qimg
                 newimg = self.QImgtoImage(Qimg,image.imagelabel)
                 Images[image.imagelabel-1] = newimg
                 
@@ -408,6 +412,11 @@ class MyWindow(QMainWindow):
         if Rect == QRect(QPoint(0,0),QtCore.QSize()):
             pass
         elif self.isInner == True or self.isInner == False:
+            # for i,image,cropped,fixed in zip([1,2,3,4],Images,self.croppedImages,Qlabelsfixed):
+            #     if image.type!=0:
+            #         fixed.getCropped(Rect)
+            #         img,pixmap,grayscale_image = self.imageInitializer('output'+str(i)+'.jpg',i)
+            #         cropped = img
             if Images[0].type!=0:
                 self.fixed1.getCropped(Rect)
                 img,pixmap,grayscale_image = self.imageInitializer('output1.jpg',1)
@@ -425,6 +434,14 @@ class MyWindow(QMainWindow):
                 img,pixmap,grayscale_image = self.imageInitializer('output4.jpg',4)
                 self.croppedImages[3]=img
         elif self.isInner == False:
+            # for image,cropped in zip(Images,self.croppedImages):
+            #     if image.type!=0:
+            #         cropped.raw_data = image.raw_data - cropped.raw_data
+            #         cropped.fft = np.fft.fft2(cropped.raw_data)
+            #         cropped.magnitude = np.abs(cropped.fft)
+            #         cropped.phase = np.angle(cropped.fft)
+            #         cropped.real = np.real(cropped.fft)
+            #         cropped.imaginary = np.imag(cropped.fft)
             if Images[0].type!=0:
                 self.croppedImages[0].raw_data = Images[0].raw_data - self.croppedImages[0].raw_data
                 self.croppedImages[0].fft = np.fft.fft2(self.croppedImages[0].raw_data)
