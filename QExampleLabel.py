@@ -33,12 +33,15 @@ class QExampleLabel (QLabel):
     def setImage (self,pixmap,img,grayscale_image):
         self.img = img
         self.Qimg = QImage(img.path)
-        self.originalQimg = QImage(img.path)
+        self.originalQimg = QImage(img.path).copy()
         self.grayscale_image = grayscale_image
         self.setPixmap(pixmap)
         self.croppedPixmap = pixmap
         a = np.zeros((700,700,3),dtype=np.uint8)
         self.zeros = PIL.Image.fromarray(a)
+
+    def setOriginalPath(self,path):
+        self.originalPath = path
 
     def removeImage(self):
         QLabel.clear()
@@ -144,7 +147,7 @@ class QExampleLabel (QLabel):
         self.setPixmap(QPixmap.fromImage(img))
         if os.path.exists('temp.jpg'):
             os.remove('temp.jpg')
-        t2 = self.qimg2cv(self.originalQimg)
+        t2 = self.qimg2cv(QImage(self.originalPath))
         Image2 = cv2.addWeighted(t2, self.contrast, t2, 0, self.brightness)
         cv2.imwrite('temp.jpg',Image2)
         self.Qimg = QImage('temp.jpg')
