@@ -252,6 +252,7 @@ class MyWindow(QMainWindow):
     def imageDisplay(self,Qlabel,Qlabel2,QComboBox,imglabel):
         filename = QtWidgets.QFileDialog.getOpenFileName()
         path = filename[0]
+        Qlabel.setOriginalPath(path)
         img,self.pixmap,grayscale_image = self.imageInitializer(path,imglabel)
         if img.height < self.minHeight:
             self.minHeight = img.height
