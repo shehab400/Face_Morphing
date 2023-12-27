@@ -604,8 +604,8 @@ class MyWindow(QMainWindow):
             img = PIL.Image.open('temp.jpg')
             img.paste(self.zeros,(self.crop.x(),self.crop.y()))
             img.save('temp.jpg')
-            img = QImage('temp.jpg')
-            self.addImageInMain(self.output,img)
+            self.tempImg = QImage('temp.jpg')
+        self.addImageInMain(self.output,self.tempImg)
         # self.output_window.addimage(self.output,self.tempImg)
 
     def UpdateProgressBar(self,value):
