@@ -410,6 +410,10 @@ class MyWindow(QMainWindow):
         ratio4=self.ui.horizontalSlider_4.value()/100
         Rect = self.changed1.Rect
         self.crop = Rect
+        # if os.path.exists('temp.jpg'):
+        #     os.remove('temp.jpg')
+        # if os.path.exists('zeros.jpg'):
+        #     os.remove('zeros.jpg')
         if Rect == QRect(QPoint(0,0),QtCore.QSize()):
             pass
         elif self.isInner == True or self.isInner == False:
