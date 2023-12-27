@@ -482,7 +482,7 @@ class MyWindow(QMainWindow):
             if(mode=='mag-phase'):
             
                 mixed_magnitude = np.zeros_like(self.croppedImages[0].magnitude,np.float64)
-                mixed_phase = np.ones_like(self.croppedImages[0].phase,dtype=np.complex128)
+                mixed_phase = np.zeros_like(self.croppedImages[0].phase,dtype=np.complex128)
                 if self.ui.comboBox_1.currentText()=="Magnitude":
                     mixed_magnitude =self.croppedImages[0].magnitude * ratio1
                 else:
@@ -491,17 +491,26 @@ class MyWindow(QMainWindow):
                 if  self.ui.comboBox_2.currentText()=="Magnitude":
                     mixed_magnitude +=self.croppedImages[1].magnitude * ratio2
                 else:
-                    mixed_phase += np.exp(1j * self.croppedImages[1].phase)* ratio2
+                    # if np.max(np.angle(mixed_phase)) == 0:
+                    #     mixed_phase = np.exp(1j * self.croppedImages[1].phase)* ratio2
+                    # else:
+                        mixed_phase += np.exp(1j * self.croppedImages[1].phase)* ratio2
 
                 if self.ui.comboBox_3.currentText()=="Magnitude":
                     mixed_magnitude +=self.croppedImages[2].magnitude * ratio3
                 else:
-                    mixed_phase +=np.exp(1j * self.croppedImages[2].phase)*ratio3
+                    # if np.max(np.angle(mixed_phase)) == 0:
+                    #     mixed_phase =np.exp(1j * self.croppedImages[2].phase)*ratio3
+                    # else:
+                        mixed_phase +=np.exp(1j * self.croppedImages[2].phase)*ratio3
 
                 if self.ui.comboBox_4.currentText()=="Magnitude":
                     mixed_magnitude +=self.croppedImages[3].magnitude * ratio4
                 else:
-                    mixed_phase+= np.exp(1j * self.croppedImages[3].phase)* ratio4
+                    # if np.max(np.angle(mixed_phase)) == 0:
+                    #     mixed_phase = np.exp(1j * self.croppedImages[3].phase)* ratio4
+                    # else:
+                        mixed_phase+= np.exp(1j * self.croppedImages[3].phase)* ratio4
 
 
                 if np.max(np.angle(mixed_phase)) == 0:
@@ -527,7 +536,7 @@ class MyWindow(QMainWindow):
             elif(mode=='real-imag'):
                 
                 mixed_imaginary= np.zeros_like(self.croppedImages[0].imaginary,dtype=np.complex128)
-                mixed_real = np.ones_like(self.croppedImages[0].real)
+                mixed_real = np.zeros_like(self.croppedImages[0].real)
                 if self.ui.comboBox_1.currentText()=="Real":
                     mixed_real =self.croppedImages[0].real * ratio1
                 else:
@@ -536,18 +545,27 @@ class MyWindow(QMainWindow):
                 if  self.ui.comboBox_2.currentText()=="Real":
                     mixed_real +=self.croppedImages[1].real * ratio2
                 else:
-                    mixed_imaginary += (1j* self.croppedImages[1].imaginary)* ratio2
+                    # if np.max(np.angle(mixed_imaginary)) == 0:
+                    #    mixed_imaginary = (1j* self.croppedImages[1].imaginary)* ratio2 
+                    # else:   
+                       mixed_imaginary += (1j* self.croppedImages[1].imaginary)* ratio2
 
                 if self.ui.comboBox_3.currentText()=="Real":
                     mixed_real +=self.croppedImages[2].real * ratio3
                 else:
-                    mixed_imaginary +=(1j* self.croppedImages[2].imaginary)* ratio3
+                    # if np.max(np.angle(mixed_imaginary)) == 0:
+                    #     mixed_imaginary =(1j* self.croppedImages[2].imaginary)* ratio3
+                    # else:
+                        mixed_imaginary +=(1j* self.croppedImages[2].imaginary)* ratio3
 
 
                 if self.ui.comboBox_4.currentText()=="Real":
                     mixed_real +=self.croppedImages[3].real * ratio4
                 else:
-                    mixed_imaginary+=(1j* self.croppedImages[3].imaginary)* ratio4
+                    # if np.max(np.angle(mixed_imaginary)) == 0:
+                    #     mixed_imaginary = (1j* self.croppedImages[3].imaginary)* ratio4
+                    # else:
+                        mixed_imaginary+=(1j* self.croppedImages[3].imaginary)* ratio4
                 
                     
                 avg_mixed_image = np.fft.ifftshift( mixed_real + mixed_imaginary)
