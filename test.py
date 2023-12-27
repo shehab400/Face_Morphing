@@ -1,18 +1,45 @@
-# import required library
-import cv2
+from PyQt5.QtWidgets import QApplication, QLabel, QWidget, QVBoxLayout
+from PyQt5.QtGui import QPixmap, QImage, QPainter, QPainterPath, QColor
+from PyQt5.QtCore import Qt, QRectF
+import sys
 
-# read the input image
-img = cv2.imread('1.jpg')
+class ImageWidget(QWidget):
+    def __init__(self):
+        super(ImageWidget,self).__init__()
 
-# define the contrast and brightness value
-contrast = 1 # Contrast control ( 0 to 127)
-brightness = 0 # Brightness control (0-100)
+        # Load the image into the QLabel
+        self.image_label = QLabel(self)
+        pixmap = QPixmap("1.jpg")  # Replace with the path to your image
+        self.image_label.setPixmap(pixmap)
 
-# call addWeighted function. use beta = 0 to effectively only
-#operate on one image
-out = cv2.addWeighted( img, contrast, img, 0, brightness)
+        # Define the rectangle to clear (replace these values with your desired coordinates and dimensions)
+        self.rect = QRectF(50, 50, 100, 100)
 
-# display the image with changed contrast and brightness
-cv2.imshow('adjusted', out)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
+        # Call the function to modify and update the image
+        self.modify_image()
+
+        # Set up the layout
+        layout = QVBoxLayout(self)
+        layout.addWidget(self.image_label)
+
+    def modify_image(self):
+        # Get the image from the QLabel
+        image = self.image_label.pixmap().toImage()
+
+        # Clear the specified rectangle in the image
+        self.clear_rect(image, self.rect)
+
+        # Save the modified image to a file (replace "path_to_modified_image.jpg" with the desired path)
+        image.save("wadawd.png")
+
+    def clear_rect(self, image, rect):
+        painter = QPainter(image)
+        painter.setCompositionMode(QPainter.CompositionMode_Clear)
+        painter.fillRect(rect, Qt.transparent)
+        painter.end()
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    widget = ImageWidget()
+    widget.show()
+    sys.exit(app.exec_())

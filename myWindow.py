@@ -159,9 +159,9 @@ class MyWindow(QMainWindow):
 
     def UpdateRubberBands(self):
         Rect = self.changed1.Rect
-        self.changed2.showRubberBand(Rect)
-        self.changed3.showRubberBand(Rect)
-        self.changed4.showRubberBand(Rect)
+        for i,changed in zip([1,2,3],[self.changed2,self.changed3,self.changed4]):
+            if Images[i].type!=0:
+                changed.showRubberBand(Rect)
         
 
     # def mousePressEvent(self,Qlabel):
@@ -409,31 +409,32 @@ class MyWindow(QMainWindow):
         ratio3=self.ui.horizontalSlider_3.value()/100
         ratio4=self.ui.horizontalSlider_4.value()/100
         Rect = self.changed1.Rect
+        self.crop = Rect
         if Rect == QRect(QPoint(0,0),QtCore.QSize()):
             pass
         elif self.isInner == True or self.isInner == False:
-            # for i,image,cropped,fixed in zip([1,2,3,4],Images,self.croppedImages,Qlabelsfixed):
-            #     if image.type!=0:
-            #         fixed.getCropped(Rect)
-            #         img,pixmap,grayscale_image = self.imageInitializer('output'+str(i)+'.jpg',i)
-            #         cropped = img
-            if Images[0].type!=0:
-                self.fixed1.getCropped(Rect)
-                img,pixmap,grayscale_image = self.imageInitializer('output1.jpg',1)
-                self.croppedImages[0]=img
-            if Images[1].type!=0:
-                self.fixed2.getCropped(Rect)
-                img,pixmap,grayscale_image = self.imageInitializer('output2.jpg',2)
-                self.croppedImages[1]=img
-            if Images[2].type!=0:
-                self.fixed3.getCropped(Rect)
-                img,pixmap,grayscale_image = self.imageInitializer('output3.jpg',3)
-                self.croppedImages[2]=img
-            if Images[3].type!=0:
-                self.fixed4.getCropped(Rect)
-                img,pixmap,grayscale_image = self.imageInitializer('output4.jpg',4)
-                self.croppedImages[3]=img
-        elif self.isInner == False:
+            for i,image,fixed in zip([1,2,3,4],Images,Qlabelsfixed):
+                if image.type!=0:
+                    fixed.getCropped(Rect)
+                    img,pixmap,grayscale_image = self.imageInitializer('output'+str(i)+'.jpg',i)
+                    self.croppedImages[i-1] = img
+            # if Images[0].type!=0:
+            #     self.fixed1.getCropped(Rect)
+            #     img,pixmap,grayscale_image = self.imageInitializer('output1.jpg',1)
+            #     self.croppedImages[0]=img
+            # if Images[1].type!=0:
+            #     self.fixed2.getCropped(Rect)
+            #     img,pixmap,grayscale_image = self.imageInitializer('output2.jpg',2)
+            #     self.croppedImages[1]=img
+            # if Images[2].type!=0:
+            #     self.fixed3.getCropped(Rect)
+            #     img,pixmap,grayscale_image = self.imageInitializer('output3.jpg',3)
+            #     self.croppedImages[2]=img
+            # if Images[3].type!=0:
+            #     self.fixed4.getCropped(Rect)
+            #     img,pixmap,grayscale_image = self.imageInitializer('output4.jpg',4)
+            #     self.croppedImages[3]=img
+        if self.isInner == False:
             # for image,cropped in zip(Images,self.croppedImages):
             #     if image.type!=0:
             #         cropped.raw_data = image.raw_data - cropped.raw_data
@@ -442,34 +443,43 @@ class MyWindow(QMainWindow):
             #         cropped.phase = np.angle(cropped.fft)
             #         cropped.real = np.real(cropped.fft)
             #         cropped.imaginary = np.imag(cropped.fft)
-            if Images[0].type!=0:
-                self.croppedImages[0].raw_data = Images[0].raw_data - self.croppedImages[0].raw_data
-                self.croppedImages[0].fft = np.fft.fft2(self.croppedImages[0].raw_data)
-                self.croppedImages[0].magnitude = np.abs(self.croppedImages[0].fft)
-                self.croppedImages[0].phase = np.angle(self.croppedImages[0].fft)
-                self.croppedImages[0].real = np.real(self.croppedImages[0].fft)
-                self.croppedImages[0].imaginary = np.imag(self.croppedImages[0].fft)    
-            if Images[1].type!=0:
-                self.croppedImages[1].raw_data = Images[1].raw_data - self.croppedImages[1].raw_data
-                self.croppedImages[1].fft = np.fft.fft2(self.croppedImages[1].raw_data)
-                self.croppedImages[1].magnitude = np.abs(self.croppedImages[1].fft)
-                self.croppedImages[1].phase = np.angle(self.croppedImages[1].fft)
-                self.croppedImages[1].real = np.real(self.croppedImages[1].fft)
-                self.croppedImages[1].imaginary = np.imag(self.croppedImages[1].fft)    
-            if Images[2].type!=0:
-                self.croppedImages[2].raw_data = Images[2].raw_data - self.croppedImages[2].raw_data
-                self.croppedImages[2].fft = np.fft.fft2(self.croppedImages[2].raw_data)
-                self.croppedImages[2].magnitude = np.abs(self.croppedImages[2].fft)
-                self.croppedImages[2].phase = np.angle(self.croppedImages[2].fft)
-                self.croppedImages[2].real = np.real(self.croppedImages[2].fft)
-                self.croppedImages[2].imaginary = np.imag(self.croppedImages[2].fft)    
-            if Images[3].type!=0:
-                self.croppedImages[3].raw_data = Images[3].raw_data - self.croppedImages[3].raw_data
-                self.croppedImages[3].fft = np.fft.fft2(self.croppedImages[3].raw_data)
-                self.croppedImages[3].magnitude = np.abs(self.croppedImages[3].fft)
-                self.croppedImages[3].phase = np.angle(self.croppedImages[3].fft)
-                self.croppedImages[3].real = np.real(self.croppedImages[3].fft)
-                self.croppedImages[3].imaginary = np.imag(self.croppedImages[3].fft)    
+
+            # if Images[0].type!=0:
+            #     self.croppedImages[0].raw_data = Images[0].raw_data - self.croppedImages[0].raw_data
+            #     self.croppedImages[0].fft = np.fft.fft2(self.croppedImages[0].raw_data)
+            #     self.croppedImages[0].magnitude = np.abs(self.croppedImages[0].fft)
+            #     self.croppedImages[0].phase = np.angle(self.croppedImages[0].fft)
+            #     self.croppedImages[0].real = np.real(self.croppedImages[0].fft)
+            #     self.croppedImages[0].imaginary = np.imag(self.croppedImages[0].fft)    
+            # if Images[1].type!=0:
+            #     self.croppedImages[1].raw_data = Images[1].raw_data - self.croppedImages[1].raw_data
+            #     self.croppedImages[1].fft = np.fft.fft2(self.croppedImages[1].raw_data)
+            #     self.croppedImages[1].magnitude = np.abs(self.croppedImages[1].fft)
+            #     self.croppedImages[1].phase = np.angle(self.croppedImages[1].fft)
+            #     self.croppedImages[1].real = np.real(self.croppedImages[1].fft)
+            #     self.croppedImages[1].imaginary = np.imag(self.croppedImages[1].fft)    
+            # if Images[2].type!=0:
+            #     self.croppedImages[2].raw_data = Images[2].raw_data - self.croppedImages[2].raw_data
+            #     self.croppedImages[2].fft = np.fft.fft2(self.croppedImages[2].raw_data)
+            #     self.croppedImages[2].magnitude = np.abs(self.croppedImages[2].fft)
+            #     self.croppedImages[2].phase = np.angle(self.croppedImages[2].fft)
+            #     self.croppedImages[2].real = np.real(self.croppedImages[2].fft)
+            #     self.croppedImages[2].imaginary = np.imag(self.croppedImages[2].fft)    
+            # if Images[3].type!=0:
+            #     self.croppedImages[3].raw_data = Images[3].raw_data - self.croppedImages[3].raw_data
+            #     self.croppedImages[3].fft = np.fft.fft2(self.croppedImages[3].raw_data)
+            #     self.croppedImages[3].magnitude = np.abs(self.croppedImages[3].fft)
+            #     self.croppedImages[3].phase = np.angle(self.croppedImages[3].fft)
+            #     self.croppedImages[3].real = np.real(self.croppedImages[3].fft)
+            #     self.croppedImages[3].imaginary = np.imag(self.croppedImages[3].fft)    
+
+            self.croppedImages = Images.copy()
+            self.fixed1.zeros.save('zeros.jpg')
+            img = QImage('zeros.jpg')
+            os.remove('zeros.jpg')
+            cropped = self.fixed1.cropImg(img,Rect)
+            cropped.save('zeros.jpg')
+            self.zeros = PIL.Image.open('zeros.jpg')
 
         self.setMode()
         global mode
@@ -482,7 +492,7 @@ class MyWindow(QMainWindow):
             if(mode=='mag-phase'):
             
                 mixed_magnitude = np.zeros_like(self.croppedImages[0].magnitude,np.float64)
-                mixed_phase = np.ones_like(self.croppedImages[0].phase,dtype=np.complex128)
+                mixed_phase = np.zeros_like(self.croppedImages[0].phase,dtype=np.complex128)
                 if self.ui.comboBox_1.currentText()=="Magnitude":
                     mixed_magnitude =self.croppedImages[0].magnitude * ratio1
                 else:
@@ -491,17 +501,26 @@ class MyWindow(QMainWindow):
                 if  self.ui.comboBox_2.currentText()=="Magnitude":
                     mixed_magnitude +=self.croppedImages[1].magnitude * ratio2
                 else:
-                    mixed_phase += np.exp(1j * self.croppedImages[1].phase)* ratio2
+                    # if np.max(np.angle(mixed_phase)) == 0:
+                    #     mixed_phase = np.exp(1j * self.croppedImages[1].phase)* ratio2
+                    # else:
+                        mixed_phase += np.exp(1j * self.croppedImages[1].phase)* ratio2
 
                 if self.ui.comboBox_3.currentText()=="Magnitude":
                     mixed_magnitude +=self.croppedImages[2].magnitude * ratio3
                 else:
-                    mixed_phase +=np.exp(1j * self.croppedImages[2].phase)*ratio3
+                    # if np.max(np.angle(mixed_phase)) == 0:
+                    #     mixed_phase =np.exp(1j * self.croppedImages[2].phase)*ratio3
+                    # else:
+                        mixed_phase +=np.exp(1j * self.croppedImages[2].phase)*ratio3
 
                 if self.ui.comboBox_4.currentText()=="Magnitude":
                     mixed_magnitude +=self.croppedImages[3].magnitude * ratio4
                 else:
-                    mixed_phase+= np.exp(1j * self.croppedImages[3].phase)* ratio4
+                    # if np.max(np.angle(mixed_phase)) == 0:
+                    #     mixed_phase = np.exp(1j * self.croppedImages[3].phase)* ratio4
+                    # else:
+                        mixed_phase+= np.exp(1j * self.croppedImages[3].phase)* ratio4
 
 
                 if np.max(np.angle(mixed_phase)) == 0:
@@ -527,7 +546,7 @@ class MyWindow(QMainWindow):
             elif(mode=='real-imag'):
                 
                 mixed_imaginary= np.zeros_like(self.croppedImages[0].imaginary,dtype=np.complex128)
-                mixed_real = np.ones_like(self.croppedImages[0].real)
+                mixed_real = np.zeros_like(self.croppedImages[0].real)
                 if self.ui.comboBox_1.currentText()=="Real":
                     mixed_real =self.croppedImages[0].real * ratio1
                 else:
@@ -536,18 +555,27 @@ class MyWindow(QMainWindow):
                 if  self.ui.comboBox_2.currentText()=="Real":
                     mixed_real +=self.croppedImages[1].real * ratio2
                 else:
-                    mixed_imaginary += (1j* self.croppedImages[1].imaginary)* ratio2
+                    # if np.max(np.angle(mixed_imaginary)) == 0:
+                    #    mixed_imaginary = (1j* self.croppedImages[1].imaginary)* ratio2 
+                    # else:   
+                       mixed_imaginary += (1j* self.croppedImages[1].imaginary)* ratio2
 
                 if self.ui.comboBox_3.currentText()=="Real":
                     mixed_real +=self.croppedImages[2].real * ratio3
                 else:
-                    mixed_imaginary +=(1j* self.croppedImages[2].imaginary)* ratio3
+                    # if np.max(np.angle(mixed_imaginary)) == 0:
+                    #     mixed_imaginary =(1j* self.croppedImages[2].imaginary)* ratio3
+                    # else:
+                        mixed_imaginary +=(1j* self.croppedImages[2].imaginary)* ratio3
 
 
                 if self.ui.comboBox_4.currentText()=="Real":
                     mixed_real +=self.croppedImages[3].real * ratio4
                 else:
-                    mixed_imaginary+=(1j* self.croppedImages[3].imaginary)* ratio4
+                    # if np.max(np.angle(mixed_imaginary)) == 0:
+                    #     mixed_imaginary = (1j* self.croppedImages[3].imaginary)* ratio4
+                    # else:
+                        mixed_imaginary+=(1j* self.croppedImages[3].imaginary)* ratio4
                 
                     
                 avg_mixed_image = np.fft.ifftshift( mixed_real + mixed_imaginary)
@@ -571,7 +599,13 @@ class MyWindow(QMainWindow):
         self.worker.end = True
 
     def showOutput(self):
-        self.addImageInMain(self.output,self.tempImg)
+        if self.crop != QRect(QPoint(0,0),QtCore.QSize()) and self.isInner == False:
+            self.tempImg.save('temp.jpg')
+            img = PIL.Image.open('temp.jpg')
+            img.paste(self.zeros,(self.crop.x(),self.crop.y()))
+            img.save('temp.jpg')
+            img = QImage('temp.jpg')
+            self.addImageInMain(self.output,img)
         # self.output_window.addimage(self.output,self.tempImg)
 
     def UpdateProgressBar(self,value):
