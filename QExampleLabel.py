@@ -161,6 +161,11 @@ class QExampleLabel (QLabel):
         if os.path.exists('temp.jpg'):
             os.remove("temp.jpg")
         return mat
+    
+    def getRatio(self):
+        originalRect = self.img.width * self.img.height
+        rect = self.Rect.height() * self.Rect.width()
+        return rect/originalRect
 
 if __name__ == '__main__':
     myQApplication = QApplication(sys.argv)

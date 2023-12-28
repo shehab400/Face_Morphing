@@ -5,6 +5,8 @@ class Image:
         self.imagelabel=0            
         # Get size
         self.shape = None
+        self.freqx = None
+        self.freqy = None
         self.width = 0
         self.height = 0
         
