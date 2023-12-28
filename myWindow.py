@@ -195,6 +195,7 @@ class MyWindow(QMainWindow):
         img.pixmap = self.pixmap
         img.grayscale = grayscale_image
 
+
         raw_data = plt.imread(img.path)
         raw_data = raw_data.astype('float32')
         raw_data /= 255
@@ -203,6 +204,9 @@ class MyWindow(QMainWindow):
         img.shape = img.raw_data.shape
         img.width = img.shape[1]
         img.height = img.shape[0]
+
+        img.freqx = np.fft.fftfreq(img.shape[0])
+        img.freqy = np.fft.fftfreq(img.shape[1])
         
         # # Fourier FFT
         img.fft = np.fft.fft2(img.raw_data)
@@ -410,6 +414,7 @@ class MyWindow(QMainWindow):
         ratio3=self.ui.horizontalSlider_3.value()/100
         ratio4=self.ui.horizontalSlider_4.value()/100
         Rect = self.changed1.Rect
+        self.croppedImages = Images.copy()
         self.crop = Rect
         # if os.path.exists('temp.jpg'):
         #     os.remove('temp.jpg')
@@ -418,11 +423,43 @@ class MyWindow(QMainWindow):
         if Rect == QRect(QPoint(0,0),QtCore.QSize()):
             pass
         elif self.isInner == True or self.isInner == False:
-            for i,image,fixed in zip([1,2,3,4],Images,Qlabelsfixed):
-                if image.type!=0:
-                    fixed.getCropped(Rect)
-                    img,pixmap,grayscale_image = self.imageInitializer('output'+str(i)+'.jpg',i)
-                    self.croppedImages[i-1] = img
+            # for i,image,fixed in zip([1,2,3,4],Images,Qlabelsfixed):
+            #     if image.type!=0:
+            #         fixed.getCropped(Rect)
+            #         img,pixmap,grayscale_image = self.imageInitializer('output'+str(i)+'.jpg',i)
+            #         self.croppedImages[i-1] = img
+            ratio = self.changed1.getRatio()
+            for i in range(4):
+                maxfreqx = ratio * np.max(self.croppedImages[i].freqx)
+                maxfreqy = ratio * np.max(self.croppedImages[i].freqy)
+                indicesx = np.where((self.croppedImages[i].freqx <= maxfreqx) * (self.croppedImages[i].freqx >= -maxfreqx))
+                indicesy = np.where((self.croppedImages[i].freqy <= maxfreqy) * (self.croppedImages[i].freqy >= -maxfreqy))
+                indicesx = list(indicesx[0])
+                indicesy = list(indicesy[0])
+                print(indicesx)
+                print(indicesy)
+                newfft = []
+                for j in range(len(indicesx)):
+                    newfft.append([])
+                c=-1
+                for ii in indicesx:
+                    c+=1
+                    for iii in indicesy:
+                        newfft[c].append(self.croppedImages[i].fft[ii][iii])
+                self.croppedImages[i].fft = newfft
+                self.croppedImages[i].magnitude = np.abs(self.croppedImages[i].fft)
+                self.croppedImages[i].phase = np.angle(self.croppedImages[i].fft)
+                self.croppedImages[i].real = np.real(self.croppedImages[i].fft)
+                self.croppedImages[i].imaginary = np.imag(self.croppedImages[i].fft)
+            # self.croppedImages[0].freqx = newfreqx
+            # self.croppedImages[0].freqy = newfreqy
+            # print(newfreqx)
+            # print(newfreqy)
+            # for i in range(len(self.croppedImages[0].fft)):
+            #     for ii in range(len(self.croppedImages[0].fft[0])):
+            #         for iii in range(len(self.croppedImages[0].fft[i][ii])):
+
+
             # if Images[0].type!=0:
             #     self.fixed1.getCropped(Rect)
             #     img,pixmap,grayscale_image = self.imageInitializer('output1.jpg',1)
