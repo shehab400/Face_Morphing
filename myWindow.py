@@ -211,6 +211,7 @@ class MyWindow(QMainWindow):
         # # Fourier FFT
         img.fft = np.fft.fft2(img.raw_data)
         img.fft=np.fft.fftshift(img.fft)
+        
         # # Get magnitude
         # img.magnitude = np.abs(img.fft)
         img.magnitude = np.abs(img.fft)
@@ -432,21 +433,25 @@ class MyWindow(QMainWindow):
             for i in range(4):
                 maxfreqx = ratio * np.max(self.croppedImages[i].freqx)
                 maxfreqy = ratio * np.max(self.croppedImages[i].freqy)
-                indicesx = np.where((self.croppedImages[i].freqx <= maxfreqx) * (self.croppedImages[i].freqx >= -maxfreqx))
-                indicesy = np.where((self.croppedImages[i].freqy <= maxfreqy) * (self.croppedImages[i].freqy >= -maxfreqy))
+                indicesx = np.where((self.croppedImages[i].freqx >= maxfreqx) * (self.croppedImages[i].freqx >= -maxfreqx))
+                indicesy = np.where((self.croppedImages[i].freqy >= maxfreqy) * (self.croppedImages[i].freqy >= -maxfreqy))
                 indicesx = list(indicesx[0])
                 indicesy = list(indicesy[0])
-                print(indicesx)
-                print(indicesy)
-                newfft = []
-                for j in range(len(indicesx)):
-                    newfft.append([])
-                c=-1
-                for ii in indicesx:
-                    c+=1
-                    for iii in indicesy:
-                        newfft[c].append(self.croppedImages[i].fft[ii][iii])
-                self.croppedImages[i].fft = newfft
+                print(len(indicesx))
+                print(len(indicesy))
+                # newfft = []
+                # for j in range(len(indicesx)):
+                #     newfft.append([])
+                # c=-1
+                # for ii in indicesx:
+                #     c+=1
+                #     for iii in indicesy:
+                #         newfft[c].append(self.croppedImages[i].fft[ii][iii])
+                
+                for x, y in zip(indicesx, indicesy):
+                  self.croppedImages[i].fft[x, y] = 0
+               
+                # self.croppedImages[i].fft = newfft
                 self.croppedImages[i].magnitude = np.abs(self.croppedImages[i].fft)
                 self.croppedImages[i].phase = np.angle(self.croppedImages[i].fft)
                 self.croppedImages[i].real = np.real(self.croppedImages[i].fft)
@@ -477,6 +482,33 @@ class MyWindow(QMainWindow):
             #     img,pixmap,grayscale_image = self.imageInitializer('output4.jpg',4)
             #     self.croppedImages[3]=img
         if self.isInner == False:
+            ratio = self.changed1.getRatio()
+            for i in range(4):
+                maxfreqx = 0.5 * np.max(self.croppedImages[i].freqx)
+                maxfreqy = 0.5 * np.max(self.croppedImages[i].freqy)
+                indicesx = np.where((self.croppedImages[i].freqx <= maxfreqx) * (self.croppedImages[i].freqx <= -maxfreqx))
+                indicesy = np.where((self.croppedImages[i].freqy <= maxfreqy) * (self.croppedImages[i].freqy <= -maxfreqy))
+                indicesx = list(indicesx[0])
+                indicesy = list(indicesy[0])
+                print(len(indicesx))
+                print(len(indicesy))
+                # newfft = []
+                # for j in range(len(indicesx)):
+                #     newfft.append([])
+                # c=-1
+                # for ii in indicesx:
+                #     c+=1
+                #     for iii in indicesy:
+                #         newfft[c].append(self.croppedImages[i].fft[ii][iii])
+                
+                for x, y in zip(indicesx, indicesy):
+                  self.croppedImages[i].fft[x, y] = 0
+               
+                # self.croppedImages[i].fft = newfft
+                self.croppedImages[i].magnitude = np.abs(self.croppedImages[i].fft)
+                self.croppedImages[i].phase = np.angle(self.croppedImages[i].fft)
+                self.croppedImages[i].real = np.real(self.croppedImages[i].fft)
+                self.croppedImages[i].imaginary = np.imag(self.croppedImages[i].fft)
             # for image,cropped in zip(Images,self.croppedImages):
             #     if image.type!=0:
             #         cropped.raw_data = image.raw_data - cropped.raw_data
@@ -515,13 +547,13 @@ class MyWindow(QMainWindow):
             #     self.croppedImages[3].real = np.real(self.croppedImages[3].fft)
             #     self.croppedImages[3].imaginary = np.imag(self.croppedImages[3].fft)    
 
-            self.croppedImages = Images.copy()
-            self.fixed1.zeros.save('zeros.jpg')
-            img = QImage('zeros.jpg')
-            os.remove('zeros.jpg')
-            cropped = self.fixed1.cropImg(img,Rect)
-            cropped.save('zeros.jpg')
-            self.zeros = PIL.Image.open('zeros.jpg')
+            # self.croppedImages = Images.copy()
+            # self.fixed1.zeros.save('zeros.jpg')
+            # img = QImage('zeros.jpg')
+            # os.remove('zeros.jpg')
+            # cropped = self.fixed1.cropImg(img,Rect)
+            # cropped.save('zeros.jpg')
+            # self.zeros = PIL.Image.open('zeros.jpg')
 
         self.setMode()
         global mode
@@ -581,7 +613,7 @@ class MyWindow(QMainWindow):
                     final_mixed_image = np.fft.ifft2(avg_mixed_image)
                 if (np.max(final_mixed_image)>1):
                     final_mixed_image=final_mixed_image/np.max(final_mixed_image)
-                plt.imsave('test1.png',np.abs(final_mixed_image) , cmap='gray')
+                plt.imsave('test1.png',np.abs(final_mixed_image) ,cmap='gray')
                 grayscale_image = QImage('test1.png').convertToFormat(QImage.Format_Grayscale8)
                 self.tempImg = grayscale_image            
                         
@@ -643,9 +675,9 @@ class MyWindow(QMainWindow):
     def showOutput(self):
         if self.crop != QRect(QPoint(0,0),QtCore.QSize()) and self.isInner == False:
             self.tempImg.save('temp.jpg')
-            img = PIL.Image.open('temp.jpg')
-            img.paste(self.zeros,(self.crop.x(),self.crop.y()))
-            img.save('temp.jpg')
+            # img = PIL.Image.open('temp.jpg')
+            # img.paste(self.zeros,(self.crop.x(),self.crop.y()))
+            # img.save('temp.jpg')
             self.tempImg = QImage('temp.jpg')
         self.addImageInMain(self.output,self.tempImg)
         # self.output_window.addimage(self.output,self.tempImg)
@@ -653,3 +685,24 @@ class MyWindow(QMainWindow):
     def UpdateProgressBar(self,value):
         self.ui.progressBar.setValue(value)
         # self.output_window.ui.progressBar.setValue(value)
+    def generateFilter(image,w,h, filtType):
+        if w > 0.5 or h > 0.5:
+            print("w and h must be < 0.5")
+            exit()
+        m = np.size(image,0)
+        n = np.size(image,1)
+        LPF = np.zeros((m,n))
+        HPF = np.ones((m,n))
+        xi = np.round((0.5 - w/2) * m)
+        xf = np.round((0.5 + w/2) * m)
+        yi = np.round((0.5 - h/2) * n)
+        yf = np.round((0.5 + h/2) * n)
+        LPF[int(xi):int(xf),int(yi):int(yf)] = 1
+        HPF[int(xi):int(xf),int(yi):int(yf)] = 0
+        if filtType == "LPF":
+            return LPF
+        elif filtType == "HPF":
+            return HPF
+        else:
+            print("Only Ideal LPF and HPF are supported")
+            exit()
