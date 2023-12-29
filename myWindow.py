@@ -195,11 +195,11 @@ class MyWindow(QMainWindow):
         img.pixmap = self.pixmap
         img.grayscale = grayscale_image
 
-
         raw_data = plt.imread(img.path)
         raw_data = raw_data.astype('float32')
         raw_data /= 255
         img.raw_data=raw_data
+        img.raw_data = np.mean(raw_data, axis=-1)
         # Get size
         img.shape = img.raw_data.shape
         img.width = img.shape[1]
@@ -211,6 +211,7 @@ class MyWindow(QMainWindow):
         # # Fourier FFT
         img.fft = np.fft.fft2(img.raw_data)
         img.fft=np.fft.fftshift(img.fft)
+        print(img.fft.shape)
         
         # # Get magnitude
         # img.magnitude = np.abs(img.fft)
@@ -351,22 +352,22 @@ class MyWindow(QMainWindow):
             magnitude_spectrum_log = np.log1p(magnitude_spectrum)
             magnitude_spectrum_normalized = (magnitude_spectrum_log - np.min(magnitude_spectrum_log)) / (np.max(magnitude_spectrum_log) - np.min(magnitude_spectrum_log))
             plt.imsave('test.png', magnitude_spectrum_normalized, cmap='gray')
-            grayscale_image = QImage('test.png').convertToFormat(QImage.Format_Grayscale8)
+            grayscale_image = QImage('test.png')
             filteredImages[img.imagelabel-1] = grayscale_image
         if component in ["Real"] :
             real_part_normalized = (img.real - np.min(img.real)) / (np.max(img.real) - np.min(img.real))
             plt.imsave('test.png',real_part_normalized , cmap='gray')
-            grayscale_image = QImage('test.png').convertToFormat(QImage.Format_Grayscale8)
+            grayscale_image = QImage('test.png')
             filteredImages[img.imagelabel-1] = grayscale_image
         if component in ["Phase"] :
             phase_part_normalized = (img.phase - np.min(img.phase)) / (np.max(img.phase) - np.min(img.phase))
             plt.imsave('test.png',phase_part_normalized , cmap='gray')
-            grayscale_image = QImage('test.png').convertToFormat(QImage.Format_Grayscale8)
+            grayscale_image = QImage('test.png')
             filteredImages[img.imagelabel-1] = grayscale_image
         if component in ["Imaginary"] :
             imaginary_part_normalized = (img.imaginary - np.min(img.imaginary)) / (np.max(img.imaginary) - np.min(img.imaginary))
             plt.imsave('test.png',imaginary_part_normalized , cmap='gray')
-            grayscale_image = QImage('test.png').convertToFormat(QImage.Format_Grayscale8) 
+            grayscale_image = QImage('test.png')
             filteredImages[img.imagelabel-1] = grayscale_image
         Qlabel.setImage(QPixmap(grayscale_image).scaled(self.minWidth,self.minHeight),img,grayscale_image) #changed line
 
@@ -433,8 +434,8 @@ class MyWindow(QMainWindow):
             for i in range(4):
                 maxfreqx = ratio * np.max(self.croppedImages[i].freqx)
                 maxfreqy = ratio * np.max(self.croppedImages[i].freqy)
-                indicesx = np.where((self.croppedImages[i].freqx >= maxfreqx) * (self.croppedImages[i].freqx >= -maxfreqx))
-                indicesy = np.where((self.croppedImages[i].freqy >= maxfreqy) * (self.croppedImages[i].freqy >= -maxfreqy))
+                indicesx = np.where((self.croppedImages[i].freqx >= maxfreqx) + (self.croppedImages[i].freqx <= -maxfreqx))
+                indicesy = np.where((self.croppedImages[i].freqy >= maxfreqy) + (self.croppedImages[i].freqy <= -maxfreqy))
                 indicesx = list(indicesx[0])
                 indicesy = list(indicesy[0])
                 print(len(indicesx))
@@ -442,15 +443,10 @@ class MyWindow(QMainWindow):
                 # newfft = []
                 # for j in range(len(indicesx)):
                 #     newfft.append([])
-                # c=-1
-                # for ii in indicesx:
-                #     c+=1
-                #     for iii in indicesy:
-                #         newfft[c].append(self.croppedImages[i].fft[ii][iii])
+                for ii in indicesx:
+                    for iii in indicesy:
+                        self.croppedImages[i].fft[ii][iii] = 0
                 
-                for x, y in zip(indicesx, indicesy):
-                  self.croppedImages[i].fft[x, y] = 0
-               
                 # self.croppedImages[i].fft = newfft
                 self.croppedImages[i].magnitude = np.abs(self.croppedImages[i].fft)
                 self.croppedImages[i].phase = np.angle(self.croppedImages[i].fft)
@@ -614,8 +610,7 @@ class MyWindow(QMainWindow):
                 if (np.max(final_mixed_image)>1):
                     final_mixed_image=final_mixed_image/np.max(final_mixed_image)
                 plt.imsave('test1.png',np.abs(final_mixed_image) ,cmap='gray')
-                grayscale_image = QImage('test1.png').convertToFormat(QImage.Format_Grayscale8)
-                self.tempImg = grayscale_image            
+                self.tempImg = QImage('test1.png')         
                         
             elif(mode=='real-imag'):
                 
@@ -635,7 +630,7 @@ class MyWindow(QMainWindow):
                        mixed_imaginary += (1j* self.croppedImages[1].imaginary)* ratio2
 
                 if self.ui.comboBox_3.currentText()=="Real":
-                    mixed_real +=self.croppedImages[2].real * ratio3
+                    mixed_real +=self.croppedImages[2].real * ratio3 
                 else:
                     # if np.max(np.angle(mixed_imaginary)) == 0:
                     #     mixed_imaginary =(1j* self.croppedImages[2].imaginary)* ratio3
@@ -659,8 +654,7 @@ class MyWindow(QMainWindow):
                 if (np.max(final_mixed_image)>1):
                     final_mixed_image=final_mixed_image/np.max(final_mixed_image)
                 plt.imsave('test2.png',np.abs(final_mixed_image) , cmap='gray')
-                grayscale_image = QImage('test2.png').convertToFormat(QImage.Format_Grayscale8)
-                self.tempImg = grayscale_image
+                self.tempImg = QImage('test2.png')
                 # grayscale_image = QImage('test1.png').convertToFormat(QImage.Format_Grayscale8)
         self.Progressing(5)
 
