@@ -6,6 +6,7 @@ from PyQt5.QtCore import QRect,QPoint,pyqtSignal,pyqtSlot
 import cv2
 import numpy as np
 import os
+import PIL
 
 class QExampleLabel (QLabel):
     BCchanged = pyqtSignal(int)
@@ -15,7 +16,6 @@ class QExampleLabel (QLabel):
 
     def __init__(self, parentQWidget = None,flag = 0):
         super(QExampleLabel, self).__init__(parentQWidget)
-        self.Label = QLabel
         self.isCropable = False
         self.currentQRubberBand = None
         self.croppedPixmap = None
@@ -33,10 +33,15 @@ class QExampleLabel (QLabel):
     def setImage (self,pixmap,img,grayscale_image):
         self.img = img
         self.Qimg = QImage(img.path)
-        self.originalQimg = QImage(img.path)
+        self.originalQimg = QImage(img.path).copy()
         self.grayscale_image = grayscale_image
         self.setPixmap(pixmap)
         self.croppedPixmap = pixmap
+        a = np.zeros((700,700,3),dtype=np.uint8)
+        self.zeros = PIL.Image.fromarray(a)
+
+    def setOriginalPath(self,path):
+        self.originalPath = path
 
     def removeImage(self):
         QLabel.clear()
@@ -116,6 +121,11 @@ class QExampleLabel (QLabel):
         cropped.save('output'+str(self.flag)+'.jpg')
         return cropped
     
+    def cropImg(self,Qimg,QRect):
+        original = QPixmap.fromImage(Qimg)
+        cropped = original.copy(QRect)
+        return cropped
+    
     def showRubberBand(self,Rect):
         if self.currentQRubberBand != None:
             self.currentQRubberBand.hide()
@@ -137,7 +147,7 @@ class QExampleLabel (QLabel):
         self.setPixmap(QPixmap.fromImage(img))
         if os.path.exists('temp.jpg'):
             os.remove('temp.jpg')
-        t2 = self.qimg2cv(self.originalQimg)
+        t2 = self.qimg2cv(QImage(self.originalPath))
         Image2 = cv2.addWeighted(t2, self.contrast, t2, 0, self.brightness)
         cv2.imwrite('temp.jpg',Image2)
         self.Qimg = QImage('temp.jpg')
@@ -151,6 +161,11 @@ class QExampleLabel (QLabel):
         if os.path.exists('temp.jpg'):
             os.remove("temp.jpg")
         return mat
+    
+    def getRatio(self):
+        originalRect = self.img.width * self.img.height
+        rect = self.Rect.height() * self.Rect.width()
+        return rect/originalRect
 
 if __name__ == '__main__':
     myQApplication = QApplication(sys.argv)
