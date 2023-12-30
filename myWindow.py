@@ -14,6 +14,7 @@ from outputWindow import *
 import time
 from Worker import *
 from scipy.fft import fft2 , fftshift
+import copy
 
 count = 0
 
@@ -32,6 +33,7 @@ Images.append(image2)
 Images.append(image3)
 Images.append(image4)
 Qlabelsfixed=[]
+fftcopy=[]
 filteredImages = Images.copy()
 mode=""
 class MyWindow(QMainWindow):
@@ -211,6 +213,7 @@ class MyWindow(QMainWindow):
         # # Fourier FFT
         img.fft = np.fft.fft2(img.raw_data)
         img.fft=np.fft.fftshift(img.fft)
+       
         print(img.fft.shape)
         
         # # Get magnitude
@@ -278,12 +281,14 @@ class MyWindow(QMainWindow):
             #             Images[img.imagelabel-1] = newimg
             #             label.setImage(pixmap,image,image.grayscale)
             self.ResizeImgs()
+            fftcopy.append(img.fft)
                         
 
         # if self.minHeight!=10000 and self.minWidth!=10000:
         #     self.pixmap = self.pixmap.scaled(self.minWidth, self.minHeight, QtCore.Qt.KeepAspectRatio)
         else:
            Qlabel.setImage(img.pixmap,img,grayscale_image)
+           fftcopy.append(img.fft)
 
         # Images[img.imagelabel-1] = img
         self.updatingComboBox(self.ui.comboBox_1,1)
@@ -417,6 +422,8 @@ class MyWindow(QMainWindow):
         ratio4=self.ui.horizontalSlider_4.value()/100
         Rect = self.changed1.Rect
         self.croppedImages = Images.copy()
+        for fft, img in zip(fftcopy,self.croppedImages):
+            img.fft=fft
         self.crop = Rect
         # if os.path.exists('temp.jpg'):
         #     os.remove('temp.jpg')
@@ -432,22 +439,24 @@ class MyWindow(QMainWindow):
             #         self.croppedImages[i-1] = img
             ratio = self.changed1.getRatio()
             for i in range(4):
-                maxfreqx = ratio * np.max(self.croppedImages[i].freqx)
-                maxfreqy = ratio * np.max(self.croppedImages[i].freqy)
-                indicesx = np.where((self.croppedImages[i].freqx >= maxfreqx) + (self.croppedImages[i].freqx <= -maxfreqx))
-                indicesy = np.where((self.croppedImages[i].freqy >= maxfreqy) + (self.croppedImages[i].freqy <= -maxfreqy))
-                indicesx = list(indicesx[0])
-                indicesy = list(indicesy[0])
-                print(len(indicesx))
-                print(len(indicesy))
-                # newfft = []
-                # for j in range(len(indicesx)):
-                #     newfft.append([])
-                for ii in indicesx:
-                    for iii in indicesy:
-                        self.croppedImages[i].fft[ii][iii] = 0
+                # maxfreqx = ratio * np.max(self.croppedImages[i].freqx)
+                # maxfreqy = ratio * np.max(self.croppedImages[i].freqy)
+                # indicesx = np.where((self.croppedImages[i].freqx >= maxfreqx) + (self.croppedImages[i].freqx <= -maxfreqx))
+                # indicesy = np.where((self.croppedImages[i].freqy >= maxfreqy) + (self.croppedImages[i].freqy <= -maxfreqy))
                 
-                # self.croppedImages[i].fft = newfft
+                # indicesx = list(indicesx[0])
+                # indicesy = list(indicesy[0])
+                # print(len(indicesx))
+                # print(len(indicesy))
+                # # newfft = []
+                # # for j in range(len(indicesx)):
+                # #     newfft.append([])
+                # for ii in indicesx:
+                #     for iii in indicesy:
+                #         self.croppedImages[i].fft[ii][iii] = 0
+                # print(self.croppedImages[i].fft[indicesx[1]][indicesy[1]])
+                
+                self.croppedImages[i].fft = self.apply_low_pass_filter(self.croppedImages[i],ratio)
                 self.croppedImages[i].magnitude = np.abs(self.croppedImages[i].fft)
                 self.croppedImages[i].phase = np.angle(self.croppedImages[i].fft)
                 self.croppedImages[i].real = np.real(self.croppedImages[i].fft)
@@ -480,14 +489,14 @@ class MyWindow(QMainWindow):
         if self.isInner == False:
             ratio = self.changed1.getRatio()
             for i in range(4):
-                maxfreqx = 0.5 * np.max(self.croppedImages[i].freqx)
-                maxfreqy = 0.5 * np.max(self.croppedImages[i].freqy)
-                indicesx = np.where((self.croppedImages[i].freqx <= maxfreqx) * (self.croppedImages[i].freqx <= -maxfreqx))
-                indicesy = np.where((self.croppedImages[i].freqy <= maxfreqy) * (self.croppedImages[i].freqy <= -maxfreqy))
-                indicesx = list(indicesx[0])
-                indicesy = list(indicesy[0])
-                print(len(indicesx))
-                print(len(indicesy))
+                # maxfreqx = 0.5 * np.max(self.croppedImages[i].freqx)
+                # maxfreqy = 0.5 * np.max(self.croppedImages[i].freqy)
+                # indicesx = np.where((self.croppedImages[i].freqx <= maxfreqx) * (self.croppedImages[i].freqx >= -maxfreqx))
+                # indicesy = np.where((self.croppedImages[i].freqy <= maxfreqy) * (self.croppedImages[i].freqy >= -maxfreqy))
+                # indicesx = list(indicesx[0])
+                # indicesy = list(indicesy[0])
+                # print(len(indicesx))
+                # print(len(indicesy))
                 # newfft = []
                 # for j in range(len(indicesx)):
                 #     newfft.append([])
@@ -497,10 +506,11 @@ class MyWindow(QMainWindow):
                 #     for iii in indicesy:
                 #         newfft[c].append(self.croppedImages[i].fft[ii][iii])
                 
-                for x, y in zip(indicesx, indicesy):
-                  self.croppedImages[i].fft[x, y] = 0
+                # for x, y in zip(indicesx, indicesy):
+                #   self.croppedImages[i].fft[x, y] = 0
                
                 # self.croppedImages[i].fft = newfft
+                self.croppedImages[i].fft = self.apply_high_pass_filter(self.croppedImages[i],ratio)
                 self.croppedImages[i].magnitude = np.abs(self.croppedImages[i].fft)
                 self.croppedImages[i].phase = np.angle(self.croppedImages[i].fft)
                 self.croppedImages[i].real = np.real(self.croppedImages[i].fft)
@@ -681,8 +691,8 @@ class MyWindow(QMainWindow):
         # self.output_window.ui.progressBar.setValue(value)
     def generateFilter(image,w,h, filtType):
         if w > 0.5 or h > 0.5:
-            print("w and h must be < 0.5")
-            exit()
+                print("w and h must be < 0.5")
+                exit()
         m = np.size(image,0)
         n = np.size(image,1)
         LPF = np.zeros((m,n))
@@ -697,6 +707,27 @@ class MyWindow(QMainWindow):
             return LPF
         elif filtType == "HPF":
             return HPF
-        else:
-            print("Only Ideal LPF and HPF are supported")
-            exit()
+    def apply_high_pass_filter(self, image, ratio):
+        fft_shifted = image.fft
+        freqx = image.freqx
+        freqy = image.freqy
+        maxfreqx = ratio * np.max(freqx)
+        maxfreqy = ratio * np.max(freqy)
+        high_pass_filter = np.ones_like(fft_shifted)
+        high_pass_filter[np.abs(freqx) <= maxfreqx, :] = 0
+        high_pass_filter[:, np.abs(freqy) <= maxfreqy] = 0
+        filtered_fft = fft_shifted * high_pass_filter
+        return filtered_fft
+        # filtered_image = np.abs(np.fft.ifft2(np.fft.ifftshift(filtered_fft)))
+    def apply_low_pass_filter(self, image, ratio):
+        fft_shifted = image.fft
+        freqx = image.freqx
+        freqy = image.freqy
+        maxfreqx = ratio * np.max(freqx)
+        maxfreqy = ratio * np.max(freqy)
+        low_pass_filter = np.zeros_like(fft_shifted)
+        low_pass_filter[np.abs(freqx) <= maxfreqx, :] = 1
+        low_pass_filter[:, np.abs(freqy) <= maxfreqy] = 1
+        filtered_fft = fft_shifted * low_pass_filter
+        # filtered_image = np.abs(np.fft.ifft2(np.fft.ifftshift(filtered_fft)))
+        return filtered_fft
