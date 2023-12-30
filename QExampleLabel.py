@@ -19,6 +19,7 @@ class QExampleLabel (QLabel):
         self.isCropable = False
         self.currentQRubberBand = None
         self.croppedPixmap = None
+        self.originQPoint = QPoint(0,0)
         self.img = None
         self.Qimg = None
         self.originalQimg = None
@@ -28,7 +29,7 @@ class QExampleLabel (QLabel):
         self.isBrightness = False
         self.contrast = 1
         self.brightness = 0
-        self.Rect = QRect(QPoint(0,0),QtCore.QSize())
+        self.Rect = None
 
     def setImage (self,pixmap,img,grayscale_image):
         self.img = img
@@ -68,7 +69,7 @@ class QExampleLabel (QLabel):
         if self.currentQRubberBand != None:
             self.currentQRubberBand.hide()
         self.currentQRubberBand = None
-        self.Rect = QRect(QPoint(0,0),QtCore.QSize())
+        self.Rect = QRect(self.originQPoint,QtCore.QSize())
 
     def mouseDoubleClickEvent(self, evenQMouseEvent):
         self.doubleClicked.emit(1)
@@ -82,12 +83,14 @@ class QExampleLabel (QLabel):
             self.currentQRubberBand = QRubberBand(QRubberBand.Rectangle, self)
             self.currentQRubberBand.setGeometry(QRect(self.originQPoint, QtCore.QSize()))
             self.currentQRubberBand.show()
+            self.moved = False
         elif self.isBrightness == True or self.isContrast == True:
             self.originQPoint = eventQMouseEvent.pos()
 
     def mouseMoveEvent (self, eventQMouseEvent):
         if self.isCropable == True:
             self.currentQRubberBand.setGeometry(QRect(self.originQPoint, eventQMouseEvent.pos()).normalized())
+            self.moved = True
         elif self.isBrightness == True or self.isContrast == True:
             self.SecondQPoint = eventQMouseEvent.pos()
             if self.isBrightness == True:
@@ -103,7 +106,10 @@ class QExampleLabel (QLabel):
             self.SecondQPoint = self.originQPoint
         if self.isCropable == True:
             currentQRect = self.currentQRubberBand.geometry()
-            self.Rect = currentQRect
+            if self.moved == True:
+                self.Rect = currentQRect
+            else:
+                self.Rect = None
             self.RubberBandChanged.emit(1)
             cropQPixmap = self.pixmap().copy(currentQRect)
             self.croppedPixmap = cropQPixmap
@@ -127,11 +133,12 @@ class QExampleLabel (QLabel):
         return cropped
     
     def showRubberBand(self,Rect):
-        if self.currentQRubberBand != None:
+        if self.currentQRubberBand != None or Rect == None:
             self.currentQRubberBand.hide()
-        self.currentQRubberBand = QRubberBand(QRubberBand.Rectangle, self)
-        self.currentQRubberBand.setGeometry(Rect)
-        self.currentQRubberBand.show()
+        if Rect != None:
+            self.currentQRubberBand = QRubberBand(QRubberBand.Rectangle, self)
+            self.currentQRubberBand.setGeometry(Rect)
+            self.currentQRubberBand.show()
 
     def changeBC(self):
         if self.contrast == 0:

@@ -1,3 +1,4 @@
+import numpy as np
 class Image:
     def __init__(self):
         self.path = ""
@@ -26,3 +27,24 @@ class Image:
     
         # self.pixmap = None
         # self.components = dict()
+
+    def copy(self):
+        img = Image()
+        img.path = self.path
+        img.raw_data = self.raw_data
+        img.imagelabel = self.imagelabel
+        img.shape = self.shape
+        img.freqx = np.fft.fftfreq(img.shape[0])
+        img.freqy = np.fft.fftfreq(img.shape[1])
+        img.width = self.width
+        img.height = self.height
+        img.fft = self.fft.copy()
+        img.magnitude = self.magnitude.copy()
+        img.phase = self.phase.copy()
+        img.real = self.real.copy()
+        img.imaginary = self.imaginary.copy()
+        img.type = self.type
+        img.pixmap = None
+        img.grayscale = None
+        img.key = self.key
+        return img
