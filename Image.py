@@ -1,4 +1,6 @@
 import numpy as np
+from PyQt5.QtGui import QPixmap,QImage
+import matplotlib.pyplot as plt
 class Image:
     def __init__(self):
         self.path = ""
@@ -10,7 +12,7 @@ class Image:
         self.freqy = None
         self.width = 0
         self.height = 0
-        
+        self.original_image = None
         self.fft = None
         # Get magnitude
         self.magnitude = None
@@ -27,6 +29,31 @@ class Image:
     
         # self.pixmap = None
         # self.components = dict()
+
+    def imageInitializer(self,path,imglabel):
+        self.imagelabel=imglabel
+        self.path = path
+        self.original_image = QImage(self.path)
+        grayscale_image = self.original_image.convertToFormat(QImage.Format_Grayscale8)
+        self.pixmap = QPixmap.fromImage(grayscale_image)
+        self.grayscale = grayscale_image
+        raw_data = plt.imread(self.path)
+        raw_data = raw_data.astype('float32')
+        raw_data /= 255
+        self.raw_data=raw_data
+        self.raw_data = np.mean(raw_data, axis=-1)
+        self.shape = self.raw_data.shape
+        self.width = self.shape[1]
+        self.height = self.shape[0]
+        self.freqx = np.fft.fftfreq(self.shape[0])
+        self.freqy = np.fft.fftfreq(self.shape[1])
+        fft = np.fft.fft2(self.raw_data)
+        self.fft = np.fft.fftshift(fft)
+        print(self.fft.shape)
+        self.magnitude = np.abs(self.fft)
+        self.phase = np.angle(self.fft)
+        self.real = np.real(self.fft)
+        self.imaginary = np.imag(self.fft)
 
     def copy(self):
         img = Image()
