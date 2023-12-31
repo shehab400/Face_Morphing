@@ -33,7 +33,6 @@ Images.append(image2)
 Images.append(image3)
 Images.append(image4)
 Qlabelsfixed=[]
-fftcopy=[]
 filteredImages = [None,None,None,None]
 mode=""
 class MyWindow(QMainWindow):
@@ -191,64 +190,11 @@ class MyWindow(QMainWindow):
         self.ui.label_7.setText(str(self.ui.horizontalSlider_2.value()))
         self.ui.label_8.setText(str(self.ui.horizontalSlider_3.value()))
         self.ui.label_9.setText(str(self.ui.horizontalSlider_4.value()))
-
-    def imageInitializer(self,path,imglabel):
-        img = Image()
-        img.imagelabel=imglabel
-        img.path = path
-        # self.path
-        # self.label = self.findChild(Qlabel, "Qlabel")
-        img.original_image = QImage(img.path)
-        grayscale_image = img.original_image.convertToFormat(QImage.Format_Grayscale8)
-        self.pixmap = QPixmap.fromImage(grayscale_image)
-        img.pixmap = self.pixmap
-        img.grayscale = grayscale_image
-
-        raw_data = plt.imread(img.path)
-        raw_data = raw_data.astype('float32')
-        raw_data /= 255
-        img.raw_data=raw_data
-        img.raw_data = np.mean(raw_data, axis=-1)
-        # Get size
-        img.shape = img.raw_data.shape
-        img.width = img.shape[1]
-        img.height = img.shape[0]
-
-        img.freqx = np.fft.fftfreq(img.shape[0])
-        img.freqy = np.fft.fftfreq(img.shape[1])
-        
-        # # Fourier FFT
-        fft = np.fft.fft2(img.raw_data)
-        img.fft = np.fft.fftshift(fft)
-       
-        print(img.fft.shape)
-        
-        # # Get magnitude
-        # img.magnitude = np.abs(img.fft)
-        img.magnitude = np.abs(img.fft)
-        # # Get phase
-        img.phase = np.angle(img.fft)
-        # # Get real
-        img.real = np.real(img.fft)
-        # # Get imag
-        img.imaginary = np.imag(img.fft)
-        # global minHeigh, minWidth
-        # if img.height < minHeigh:
-        #     minHeigh = img.height
-        # if img.width < minWidth:
-        #     minWidth = img.width
-        # for image in Images:
-        #     if image.type != 0:
-        #        if image.width > minWidth:
-        #             image.width = minWidth
-                    
-        #        elif image.height > minHeigh:
-        #             image.height = minHeigh
-        return img,self.pixmap,grayscale_image
             
     def QImgtoImage(self,QImg,imglabel):
             QImg.save('temp.jpg')
-            img, pixmap, grayscale_image = self.imageInitializer('temp.jpg',imglabel)
+            img = Image()
+            img.imageInitializer('temp.jpg',imglabel)
             os.remove('temp.jpg')
             return img
             #the Image returned doesn't have a path, don't try to access it
@@ -269,7 +215,8 @@ class MyWindow(QMainWindow):
         filename = QtWidgets.QFileDialog.getOpenFileName()
         path = filename[0]
         Qlabel.setOriginalPath(path)
-        img,self.pixmap,grayscale_image = self.imageInitializer(path,imglabel)
+        img = Image()
+        img.imageInitializer(path,imglabel)
         if img.height < self.minHeight:
             self.minHeight = img.height
             img.height=self.minHeight 
@@ -288,14 +235,12 @@ class MyWindow(QMainWindow):
             #             Images[img.imagelabel-1] = newimg
             #             label.setImage(pixmap,image,image.grayscale)
             self.ResizeImgs()
-            fftcopy.append(img.fft)
                         
 
         # if self.minHeight!=10000 and self.minWidth!=10000:
         #     self.pixmap = self.pixmap.scaled(self.minWidth, self.minHeight, QtCore.Qt.KeepAspectRatio)
         else:
-           Qlabel.setImage(img.pixmap,img,grayscale_image)
-           fftcopy.append(img.fft)
+           Qlabel.setImage(img.pixmap,img,img.grayscale)
 
         # Images[img.imagelabel-1] = img
         self.updatingComboBox(self.ui.comboBox_1,1)
@@ -416,15 +361,15 @@ class MyWindow(QMainWindow):
                 img=Images[3]
                 self.plottingChosenComponents(img,component,label)
                 
-    def chooseComponent(self, type, ratio,img):
-        if type == "Magnitude":
-            return img.magnitude * ratio
-        elif type == "Phase":
-            return np.exp(1j * img.phase* ratio)
-        elif type == "Real":
-            return img.real * ratio
-        elif type == "Imaginary":
-            return (1j* img.imaginary)* ratio
+    # def chooseComponent(self, type, ratio,img):
+    #     if type == "Magnitude":
+    #         return img.magnitude * ratio
+    #     elif type == "Phase":
+    #         return np.exp(1j * img.phase* ratio)
+    #     elif type == "Real":
+    #         return img.real * ratio
+    #     elif type == "Imaginary":
+    #         return (1j* img.imaginary)* ratio
           
     def mixing(self):
         ratio1=self.ui.horizontalSlider.value()/100
