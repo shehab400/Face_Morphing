@@ -68,6 +68,8 @@ class MyWindow(QMainWindow):
         for fixed in [self.fixed1,self.fixed2,self.fixed3,self.fixed4]:
             fixed.setIsBrightness(True)
         # self.output_window = OutputWindow()
+        global MagPhase
+        MagPhase = 'RealImag'
         self.ui.applyButton.clicked.connect(self.open_output_window)
         self.ui.widget.layout().addWidget(self.fixed1)
         self.ui.widget_2.layout().addWidget(self.fixed2)
@@ -111,7 +113,7 @@ class MyWindow(QMainWindow):
         self.fixed2.doubleClicked.connect(lambda event: self.imageDisplay(self.fixed2,self.changed2,self.ui.comboBox_2,2))
         self.fixed3.doubleClicked.connect(lambda event: self.imageDisplay(self.fixed3,self.changed3,self.ui.comboBox_3,3))
         self.fixed4.doubleClicked.connect(lambda event: self.imageDisplay(self.fixed4,self.changed4,self.ui.comboBox_4,4))
-        # self.output_window.ui.pushButton.clicked.connect(self.Cancel)
+        self.ui.pushButton.clicked.connect(self.Cancel)
 
         self.fixed1.BCchanged.connect(lambda: self.UpdateBC(self.fixed1,1,self.ui.comboBox_1))
         self.fixed2.BCchanged.connect(lambda: self.UpdateBC(self.fixed2,2,self.ui.comboBox_2))
@@ -157,8 +159,12 @@ class MyWindow(QMainWindow):
         img = self.QImgtoImage(Qlabel.Qimg,imglabel)
         Images[imglabel-1] = img
         self.updatingComboBox(combobox,imglabel)
-        for i,img in zip(range(len(Images)),Images):
-            self.croppedImages[i] = img.copy()
+        c=0
+        for img in Images:
+            if img.type!=0:
+                c+=1
+        for i in range(c):
+            self.croppedImages[i] = Images[i].copy()
 
     def UpdateRubberBands(self):
         Rect = self.changed1.Rect
@@ -212,8 +218,8 @@ class MyWindow(QMainWindow):
         img.freqy = np.fft.fftfreq(img.shape[1])
         
         # # Fourier FFT
-        img.fft = np.fft.fft2(img.raw_data)
-        img.fft=np.fft.fftshift(img.fft)
+        fft = np.fft.fft2(img.raw_data)
+        img.fft = np.fft.fftshift(fft)
        
         print(img.fft.shape)
         
@@ -297,10 +303,13 @@ class MyWindow(QMainWindow):
         self.updatingComboBox(self.ui.comboBox_3,3)
         self.updatingComboBox(self.ui.comboBox_4,4)
         print(img.imagelabel)
-
+        c=0
+        for img in Images:
+            if img.type!=0:
+                c+=1
         # print(len(Images)) # need to create remove image function to update length of images array
-        for i,img in zip(range(len(Images)),Images):
-            self.croppedImages[i] = img.copy()
+        for i in range(c):
+            self.croppedImages[i] = Images[i].copy()
         for changed in [self.changed1,self.changed2,self.changed3,self.changed4]:
             changed.resetRubberBand()
         self.setMode()
@@ -346,11 +355,11 @@ class MyWindow(QMainWindow):
     def setMode(self):
        global mode
        if  self.ui.comboBox_1.currentText() in ["Real", "Imaginary"] and self.ui.comboBox_2.currentText() in ["Real", "Imaginary"] and self.ui.comboBox_3.currentText() in ["Real", "Imaginary"] and self.ui.comboBox_4.currentText() in ["Real", "Imaginary"]:
-           mode= 'real-imag' 
-           print(mode)
+           mode= 'RealImag' 
        if   self.ui.comboBox_1.currentText() in ["Magnitude", "Phase"]  and self.ui.comboBox_2.currentText() in ["Magnitude", "Phase"] and self.ui.comboBox_3.currentText() in ["Magnitude", "Phase"] and self.ui.comboBox_4.currentText() in ["Magnitude", "Phase"]:
-           mode= 'mag-phase'
-           print(mode)
+           mode= 'MagPhase'
+           if self.crop != None and self.crop != QRect(self.changed1.originQPoint,QtCore.QSize()):
+                mode = MagPhase
 
     def plottingChosenComponents(self,img,component,Qlabel):
         global grayscale_image
@@ -426,16 +435,21 @@ class MyWindow(QMainWindow):
         # self.croppedImages = Images.copy()
         # for fft, img in zip(fftcopy,self.croppedImages):
         #     img.fft=fft
-        for cropped,img in zip(self.croppedImages,Images):
-            cropped = img.copy()
         self.crop = Rect
         # if os.path.exists('temp.jpg'):
         #     os.remove('temp.jpg')
         # if os.path.exists('zeros.jpg'):
         #     os.remove('zeros.jpg')
-        temparray = [Image(),Image(),Image(),Image()]
+        temparray = []
+        c=0
+        for img in Images:
+            if img.type!=0:
+                c+=1
+                temparray.append(Image())
+        for i in range(c):
+            self.croppedImages[i] = Images[i].copy()
         if Rect == None or Rect == QRect(self.changed1.originQPoint,QtCore.QSize()):
-            for i,img in zip(range(len(Images)),Images):
+            for i,img in zip(range(c),Images):
                 temparray[i] = img.copy()
         elif self.isInner == True:
             # for i,image,fixed in zip([1,2,3,4],Images,Qlabelsfixed):
@@ -443,8 +457,8 @@ class MyWindow(QMainWindow):
             #         fixed.getCropped(Rect)
             #         img,pixmap,grayscale_image = self.imageInitializer('output'+str(i)+'.jpg',i)
             #         self.croppedImages[i-1] = img
-            ratio = self.changed1.getRatio()*1.5
-            for i in range(4):
+            ratio = self.changed1.getRatio()*1.2
+            for i in range(c):
                 # maxfreqx = ratio * np.max(self.croppedImages[i].freqx)
                 # maxfreqy = ratio * np.max(self.croppedImages[i].freqy)
                 # indicesx = np.where((self.croppedImages[i].freqx >= maxfreqx) + (self.croppedImages[i].freqx <= -maxfreqx))
@@ -462,7 +476,7 @@ class MyWindow(QMainWindow):
                 #         self.croppedImages[i].fft[ii][iii] = 0
                 # print(self.croppedImages[i].fft[indicesx[1]][indicesy[1]])
                 
-                temparray[i].fft = self.apply_low_pass_filter(self.croppedImages[i],ratio)
+                temparray[i].fft = self.innerFilter(self.croppedImages[i],ratio)
                 temparray[i].magnitude = np.abs(temparray[i].fft)
                 temparray[i].phase = np.angle(temparray[i].fft)
                 temparray[i].real = np.real(temparray[i].fft)
@@ -494,7 +508,7 @@ class MyWindow(QMainWindow):
             #     self.croppedImages[3]=img
         elif self.isInner == False:
             ratio = self.changed1.getRatio()
-            for i in range(4):
+            for i in range(c):
                 # maxfreqx = 0.5 * np.max(self.croppedImages[i].freqx)
                 # maxfreqy = 0.5 * np.max(self.croppedImages[i].freqy)
                 # indicesx = np.where((self.croppedImages[i].freqx <= maxfreqx) * (self.croppedImages[i].freqx >= -maxfreqx))
@@ -516,7 +530,7 @@ class MyWindow(QMainWindow):
                 #   self.croppedImages[i].fft[x, y] = 0
                
                 # self.croppedImages[i].fft = newfft
-                temparray[i].fft = self.apply_high_pass_filter(self.croppedImages[i],ratio)
+                temparray[i].fft = self.outerFilter(self.croppedImages[i],ratio)
                 temparray[i].magnitude = np.abs(temparray[i].fft)
                 temparray[i].phase = np.angle(temparray[i].fft)
                 temparray[i].real = np.real(temparray[i].fft)
@@ -569,44 +583,44 @@ class MyWindow(QMainWindow):
 
         self.setMode()
         global mode
-        print(mode)
-        if all(img.type != 0 for img in Images):
+        if c != 0:
             # firstcomponent=self.chooseComponent(type1,ratio1,Images[0])
             # secoundcomponent=self.chooseComponent(type2,ratio2,Images[1])
             # thirdcomponent=self.chooseComponent(type3,ratio3,Images[2])
             # fourthcomponent=self.chooseComponent(type4,ratio4,Images[3])
-            if(mode=='mag-phase'):
+            if(mode=='MagPhase'):
             
                 mixed_magnitude = np.zeros_like(temparray[0].magnitude,np.float64)
                 mixed_phase = np.zeros_like(temparray[0].phase,dtype=np.complex128)
-                if self.ui.comboBox_1.currentText()=="Magnitude":
-                    mixed_magnitude =temparray[0].magnitude * ratio1
-                else:
-                    mixed_phase = np.exp(1j * temparray[0].phase)* ratio1
+                for i,combobox,ratio in zip(range(c),[self.ui.comboBox_1,self.ui.comboBox_2,self.ui.comboBox_3,self.ui.comboBox_4],[ratio1,ratio2,ratio3,ratio4]):
+                    if combobox.currentText()=="Magnitude" or combobox.currentIndex() == 0:
+                        mixed_magnitude += temparray[i].magnitude * ratio
+                    else:
+                        mixed_phase += np.exp(1j * temparray[i].phase)* ratio
 
-                if  self.ui.comboBox_2.currentText()=="Magnitude":
-                    mixed_magnitude +=temparray[1].magnitude * ratio2
-                else:
-                    # if np.max(np.angle(mixed_phase)) == 0:
-                    #     mixed_phase = np.exp(1j * temparray[1].phase)* ratio2
-                    # else:
-                        mixed_phase += np.exp(1j * temparray[1].phase)* ratio2
+                # if  self.ui.comboBox_2.currentIndex() == 0:
+                #     mixed_magnitude +=temparray[1].magnitude * ratio2
+                # else:
+                #     # if np.max(np.angle(mixed_phase)) == 0:
+                #     #     mixed_phase = np.exp(1j * temparray[1].phase)* ratio2
+                #     # else:
+                #         mixed_phase += np.exp(1j * temparray[1].phase)* ratio2
 
-                if self.ui.comboBox_3.currentText()=="Magnitude":
-                    mixed_magnitude +=temparray[2].magnitude * ratio3
-                else:
-                    # if np.max(np.angle(mixed_phase)) == 0:
-                    #     mixed_phase =np.exp(1j * temparray[2].phase)*ratio3
-                    # else:
-                        mixed_phase +=np.exp(1j * temparray[2].phase)*ratio3
+                # if self.ui.comboBox_3.currentIndex() == 0:
+                #     mixed_magnitude +=temparray[2].magnitude * ratio3
+                # else:
+                #     # if np.max(np.angle(mixed_phase)) == 0:
+                #     #     mixed_phase =np.exp(1j * temparray[2].phase)*ratio3
+                #     # else:
+                #         mixed_phase +=np.exp(1j * temparray[2].phase)*ratio3
 
-                if self.ui.comboBox_4.currentText()=="Magnitude":
-                    mixed_magnitude +=temparray[3].magnitude * ratio4
-                else:
-                    # if np.max(np.angle(mixed_phase)) == 0:
-                    #     mixed_phase = np.exp(1j * temparray[3].phase)* ratio4
-                    # else:
-                        mixed_phase+= np.exp(1j * temparray[3].phase)* ratio4
+                # if self.ui.comboBox_4.currentIndex() == 0:
+                #     mixed_magnitude +=temparray[3].magnitude * ratio4
+                # else:
+                #     # if np.max(np.angle(mixed_phase)) == 0:
+                #     #     mixed_phase = np.exp(1j * temparray[3].phase)* ratio4
+                #     # else:
+                #         mixed_phase+= np.exp(1j * temparray[3].phase)* ratio4
 
 
                 if np.max(np.angle(mixed_phase)) == 0:
@@ -628,39 +642,40 @@ class MyWindow(QMainWindow):
                 plt.imsave('test1.png',np.abs(final_mixed_image) ,cmap='gray')
                 self.tempImg = QImage('test1.png')         
                         
-            elif(mode=='real-imag'):
+            elif(mode=='RealImag'):
                 
                 mixed_imaginary= np.zeros_like(temparray[0].imaginary,dtype=np.complex128)
                 mixed_real = np.zeros_like(temparray[0].real)
-                if self.ui.comboBox_1.currentText()=="Real":
-                    mixed_real =temparray[0].real * ratio1
-                else:
-                    mixed_imaginary =(1j* temparray[0].imaginary)* ratio1
+                for i,combobox,ratio in zip(range(c),[self.ui.comboBox_1,self.ui.comboBox_2,self.ui.comboBox_3,self.ui.comboBox_4],[ratio1,ratio2,ratio3,ratio4]):
+                    if combobox.currentText()=="Real" or combobox.currentIndex() == 0:
+                        mixed_real +=temparray[i].real * ratio
+                    else:
+                        mixed_imaginary +=(1j* temparray[i].imaginary)* ratio
 
-                if  self.ui.comboBox_2.currentText()=="Real":
-                    mixed_real +=temparray[1].real * ratio2
-                else:
-                    # if np.max(np.angle(mixed_imaginary)) == 0:
-                    #    mixed_imaginary = (1j* temparray[1].imaginary)* ratio2 
-                    # else:   
-                       mixed_imaginary += (1j* temparray[1].imaginary)* ratio2
+                # if  self.ui.comboBox_2.currentIndex() == 0:
+                #     mixed_real +=temparray[1].real * ratio2
+                # else:
+                #     # if np.max(np.angle(mixed_imaginary)) == 0:
+                #     #    mixed_imaginary = (1j* temparray[1].imaginary)* ratio2 
+                #     # else:   
+                #        mixed_imaginary += (1j* temparray[1].imaginary)* ratio2
 
-                if self.ui.comboBox_3.currentText()=="Real":
-                    mixed_real +=temparray[2].real * ratio3 
-                else:
-                    # if np.max(np.angle(mixed_imaginary)) == 0:
-                    #     mixed_imaginary =(1j* temparray[2].imaginary)* ratio3
-                    # else:
-                        mixed_imaginary +=(1j* temparray[2].imaginary)* ratio3
+                # if self.ui.comboBox_3.currentIndex() == 0:
+                #     mixed_real +=temparray[2].real * ratio3 
+                # else:
+                #     # if np.max(np.angle(mixed_imaginary)) == 0:
+                #     #     mixed_imaginary =(1j* temparray[2].imaginary)* ratio3
+                #     # else:
+                #         mixed_imaginary +=(1j* temparray[2].imaginary)* ratio3
 
 
-                if self.ui.comboBox_4.currentText()=="Real":
-                    mixed_real +=temparray[3].real * ratio4
-                else:
-                    # if np.max(np.angle(mixed_imaginary)) == 0:
-                    #     mixed_imaginary = (1j* temparray[3].imaginary)* ratio4
-                    # else:
-                        mixed_imaginary+=(1j* temparray[3].imaginary)* ratio4
+                # if self.ui.comboBox_4.currentIndex() == 0:
+                #     mixed_real +=temparray[3].real * ratio4
+                # else:
+                #     # if np.max(np.angle(mixed_imaginary)) == 0:
+                #     #     mixed_imaginary = (1j* temparray[3].imaginary)* ratio4
+                #     # else:
+                #         mixed_imaginary+=(1j* temparray[3].imaginary)* ratio4
                 
                     
                 avg_mixed_image = np.fft.ifftshift( mixed_real + mixed_imaginary)
@@ -672,7 +687,7 @@ class MyWindow(QMainWindow):
                 plt.imsave('test2.png',np.abs(final_mixed_image) , cmap='gray')
                 self.tempImg = QImage('test2.png')
                 # grayscale_image = QImage('test1.png').convertToFormat(QImage.Format_Grayscale8)
-        self.Progressing(4)
+        self.Progressing(5)
 
     def Progressing(self,value):
         self.ui.progressBar.setMaximum(value)
@@ -681,14 +696,9 @@ class MyWindow(QMainWindow):
 
     def Cancel(self):
         self.worker.end = True
+        self.ui.progressBar.setValue(0)
 
     def showOutput(self):
-        if self.crop != QRect(QPoint(0,0),QtCore.QSize()) and self.isInner == False:
-            self.tempImg.save('temp.jpg')
-            # img = PIL.Image.open('temp.jpg')
-            # img.paste(self.zeros,(self.crop.x(),self.crop.y()))
-            # img.save('temp.jpg')
-            self.tempImg = QImage('temp.jpg')
         self.addImageInMain(self.output,self.tempImg)
         # self.output_window.addimage(self.output,self.tempImg)
 
@@ -696,12 +706,12 @@ class MyWindow(QMainWindow):
         self.ui.progressBar.setValue(value)
         # self.output_window.ui.progressBar.setValue(value)
         
-    def apply_high_pass_filter(self, image, ratio):
-        fft_shifted = image.fft
-        freqx = image.freqx
-        freqy = image.freqy
-        maxfreqx = ratio * np.max(freqx)
-        maxfreqy = ratio * np.max(freqy)
+    def innerFilter(self, image, ratio):
+        fft_shifted = image.fft.copy()
+        freqx = image.freqx.copy()
+        freqy = image.freqy.copy()
+        maxfreqx = (1-ratio) * np.max(freqx)
+        maxfreqy = (1-ratio) * np.max(freqy)
         high_pass_filter = np.ones_like(fft_shifted)
         high_pass_filter[np.abs(freqx) <= maxfreqx, :] = 0
         high_pass_filter[:, np.abs(freqy) <= maxfreqy] = 0
@@ -709,12 +719,12 @@ class MyWindow(QMainWindow):
         return filtered_fft
         # filtered_image = np.abs(np.fft.ifft2(np.fft.ifftshift(filtered_fft)))
         
-    def apply_low_pass_filter(self, image, ratio):
-        fft_shifted = image.fft
-        freqx = image.freqx
-        freqy = image.freqy
-        maxfreqx = ratio * np.max(freqx)
-        maxfreqy = ratio * np.max(freqy)
+    def outerFilter(self, image, ratio):
+        fft_shifted = image.fft.copy()
+        freqx = image.freqx.copy()
+        freqy = image.freqy.copy()
+        maxfreqx = (1-ratio) * np.max(freqx)
+        maxfreqy = (1-ratio) * np.max(freqy)
         low_pass_filter = np.zeros_like(fft_shifted)
         low_pass_filter[np.abs(freqx) <= maxfreqx, :] = 1
         low_pass_filter[:, np.abs(freqy) <= maxfreqy] = 1
