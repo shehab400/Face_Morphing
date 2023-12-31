@@ -657,10 +657,10 @@ class MyWindow(QMainWindow):
         freqy = image.freqy.copy()
         maxfreqx = (1-ratio) * np.max(freqx)
         maxfreqy = (1-ratio) * np.max(freqy)
-        high_pass_filter = np.ones_like(fft_shifted)
-        high_pass_filter[np.abs(freqx) <= maxfreqx, :] = 0
-        high_pass_filter[:, np.abs(freqy) <= maxfreqy] = 0
-        filtered_fft = fft_shifted * high_pass_filter
+        filter = np.ones_like(fft_shifted)
+        filter[np.abs(freqx) <= maxfreqx, :] = 0
+        filter[:, np.abs(freqy) <= maxfreqy] = 0
+        filtered_fft = fft_shifted * filter
         return filtered_fft
         # filtered_image = np.abs(np.fft.ifft2(np.fft.ifftshift(filtered_fft)))
         
@@ -670,9 +670,9 @@ class MyWindow(QMainWindow):
         freqy = image.freqy.copy()
         maxfreqx = (1-ratio) * np.max(freqx)
         maxfreqy = (1-ratio) * np.max(freqy)
-        low_pass_filter = np.zeros_like(fft_shifted)
-        low_pass_filter[np.abs(freqx) <= maxfreqx, :] = 1
-        low_pass_filter[:, np.abs(freqy) <= maxfreqy] = 1
-        filtered_fft = fft_shifted * low_pass_filter
+        filter = np.zeros_like(fft_shifted)
+        filter[np.abs(freqx) <= maxfreqx, :] = 1
+        filter[:, np.abs(freqy) <= maxfreqy] = 1
+        filtered_fft = fft_shifted * filter
         # filtered_image = np.abs(np.fft.ifft2(np.fft.ifftshift(filtered_fft)))
         return filtered_fft
