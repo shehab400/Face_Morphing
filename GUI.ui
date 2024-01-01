@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1131</width>
+    <width>1297</width>
     <height>997</height>
    </rect>
   </property>
@@ -211,9 +211,21 @@
           <enum>QFrame::Raised</enum>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_10">
-          <item>
-           <widget class="QWidget" name="widget_5" native="true">
-            <layout class="QHBoxLayout" name="horizontalLayout_14"/>
+          <item alignment="Qt::AlignHCenter">
+           <widget class="QFrame" name="frame_7">
+            <property name="frameShape">
+             <enum>QFrame::StyledPanel</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Raised</enum>
+            </property>
+            <layout class="QGridLayout" name="gridLayout_2">
+             <item row="0" column="0">
+              <widget class="QWidget" name="widget_5" native="true">
+               <layout class="QHBoxLayout" name="horizontalLayout_14"/>
+              </widget>
+             </item>
+            </layout>
            </widget>
           </item>
           <item>
@@ -262,9 +274,21 @@
           <enum>QFrame::Raised</enum>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_11">
-          <item>
-           <widget class="QWidget" name="widget_6" native="true">
-            <layout class="QHBoxLayout" name="horizontalLayout_15"/>
+          <item alignment="Qt::AlignHCenter">
+           <widget class="QFrame" name="frame_8">
+            <property name="frameShape">
+             <enum>QFrame::StyledPanel</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Raised</enum>
+            </property>
+            <layout class="QGridLayout" name="gridLayout_5">
+             <item row="0" column="0">
+              <widget class="QWidget" name="widget_6" native="true">
+               <layout class="QHBoxLayout" name="horizontalLayout_15"/>
+              </widget>
+             </item>
+            </layout>
            </widget>
           </item>
           <item>
@@ -313,9 +337,21 @@
           <enum>QFrame::Raised</enum>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_12">
-          <item>
-           <widget class="QWidget" name="widget_7" native="true">
-            <layout class="QHBoxLayout" name="horizontalLayout_16"/>
+          <item alignment="Qt::AlignHCenter">
+           <widget class="QFrame" name="frame_9">
+            <property name="frameShape">
+             <enum>QFrame::StyledPanel</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Raised</enum>
+            </property>
+            <layout class="QGridLayout" name="gridLayout_6">
+             <item row="0" column="0">
+              <widget class="QWidget" name="widget_7" native="true">
+               <layout class="QHBoxLayout" name="horizontalLayout_16"/>
+              </widget>
+             </item>
+            </layout>
            </widget>
           </item>
           <item>
@@ -364,9 +400,21 @@
           <enum>QFrame::Raised</enum>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_13">
-          <item>
-           <widget class="QWidget" name="widget_8" native="true">
-            <layout class="QHBoxLayout" name="horizontalLayout_17"/>
+          <item alignment="Qt::AlignHCenter">
+           <widget class="QFrame" name="frame_32">
+            <property name="frameShape">
+             <enum>QFrame::StyledPanel</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Raised</enum>
+            </property>
+            <layout class="QGridLayout" name="gridLayout_9">
+             <item row="0" column="0">
+              <widget class="QWidget" name="widget_8" native="true">
+               <layout class="QHBoxLayout" name="horizontalLayout_17"/>
+              </widget>
+             </item>
+            </layout>
            </widget>
           </item>
           <item>
@@ -783,7 +831,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1131</width>
+     <width>1297</width>
      <height>21</height>
     </rect>
    </property>
