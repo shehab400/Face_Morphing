@@ -716,8 +716,8 @@
               <widget class="QLabel" name="output_1">
                <property name="minimumSize">
                 <size>
-                 <width>300</width>
-                 <height>200</height>
+                 <width>250</width>
+                 <height>166</height>
                 </size>
                </property>
                <property name="text">
@@ -732,8 +732,8 @@
               <widget class="QLabel" name="output_2">
                <property name="minimumSize">
                 <size>
-                 <width>300</width>
-                 <height>200</height>
+                 <width>250</width>
+                 <height>166</height>
                 </size>
                </property>
                <property name="text">
