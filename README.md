@@ -1,38 +1,80 @@
-# Images Morphing
-Task 4✅ – Fourier Transform Mixer
-Design and implement a desktop program that explains the relative importance of the magnitude and phase
-components as well emphasizing the frequencies different contributions to the signal. We will do this task on a 2D signal
-(i.e. image) just for clarity but the same concept applies to any signal. Your software should have the following features:
-Images Viewers:
-- Ability to open and view four gray scale images, each in one “viewport”.
-a. No Colored: If the user opens a colored image, the program should convert it to grayscale.
-b. One Size: At any point of time, the sizes of the opened images have to be unified on the smallest size of all of
-them.
-c. FT Components: For each image, the program should have two displays (one fixed display for the image, while
-the second display can show several components based on a combo-box/drop-menu selection of 1) FT
-Magnitude, 2) FT Phase, 3) FT Real, and 4) FT Imaginary components.
-d. Easy Browse: The user can change any of the images by just double clicking on its viewer (Browse function for
-this specific image).
-- Two Output Ports: The mixer result can be shown in one of two output viewports. Each output viewport is exactly
-similar to the input image viewport. The user should control in which viewport the new mixer result will
-show/resides.
-- Brightness/Contrast: In any image viewport, the user can change the brightness/contrast (i.e. window/level) of the
-image via mouse dragging (up/down and left/right). This should be doable on any of the four components as well.
-Components Mixer:
-- Any output image is the ifft of a weight average of the FT of the input four images. The user should be able to
-customize the weights of each image FT via sliders. Think of how to do such customized weights for two
-components (e.g. magnitude and phase, or real and imaginary) in an intuitive user interface.
-Regions Mixer:
-- For each FT component, the user should be able to pick which region that will be taken for the output, inner region
-(i.e. low frequencies) or out region (i.e. high frequencies). This should be done by rectangle drawn on each FT, with
+# Morphing App - Fourier Transform Mixer
 
-an option for the user to include the inner or outer region, and the selected region highlighted (via semi-
-transparent coloring or hashing) to represent the selection. The size (or percentage) of region rectangle should be
+## Overview
 
-customizable for the user via a slider or resize handles. Note that this region should be unified for all the four
-images.
-Realtime Mixing:
-- The mixing process requires an ifft operation which takes some time to be performed. Such lengthy operation
-usually requires a progress bar shown for the user to indicate the update of the process.
-- If the user changes the mixing settings and requests an update while the previous operation is still running, the
-program should just cancel the previous operation and start the new request one (Check Threads!)
+This desktop application is designed to demonstrate the relative importance of the magnitude and phase components in a 2D signal (image) using Fourier Transform Mixer. The software allows users to open and view four grayscale images simultaneously, control image sizes, customize Fourier Transform components, adjust brightness/contrast, and perform real-time mixing with customizable weights and region selections.
+
+## Features
+
+### Image Viewers
+
+1. **Open and View Images:**
+   - Open and view four grayscale images, with automatic conversion to grayscale for colored images.
+   - Ensure unified sizes for all images based on the smallest size.
+
+2. **FT Components Display:**
+   - Each image has two displays: one for the image itself and the other for Fourier Transform components.
+   - Fourier Transform (FT) components include Magnitude, Phase, Real, and Imaginary.
+   - Easily switch between components using a combo-box/drop-menu selection.
+
+3. **Easy Browse:**
+   - Change any image by double-clicking on its viewer.
+
+### Output Ports
+
+1. **Two Output Viewports:**
+   - The mixer result can be shown in one of two output viewports, each similar to the input image viewport.
+   - Users can control where the mixer result is displayed.
+
+### Brightness/Contrast
+
+1. **Adjustable Brightness/Contrast:**
+   - Change the brightness/contrast of any image viewport via mouse dragging (up/down and left/right).
+   - Apply adjustments to any of the four FT components as well.
+
+### Components Mixer
+
+1. **Customizable Weights:**
+   - Output image is the inverse Fourier transform (ifft) of a weighted average of the FT of the input four images.
+   - Customize weights for each image FT using sliders.
+
+### Regions Mixer
+
+1. **Region Selection:**
+   - Allow users to pick regions for each FT component (inner or outer) using a rectangle drawn on each FT.
+   - Provide an option to include the inner or outer region, with the selected region highlighted (semi-transparent coloring or hashing).
+   - Customize the size (or percentage) of the region rectangle via a slider or resize handles.
+
+### Real-time Mixing
+
+1. **Progress Bar:**
+   - Display a progress bar during the mixing process, indicating the update of the operation.
+   - Cancel the previous operation if the user requests a new update while the previous one is still running (check threads).
+
+## Usage
+
+1. **Open Images:**
+   - Use the file menu or drag-and-drop images onto the respective viewports.
+
+2. **Adjust Components:**
+   - Select FT components and adjust brightness/contrast as needed.
+
+3. **Customize Weights:**
+   - Use sliders to customize weights for each image.
+
+4. **Region Selection:**
+   - Draw rectangles on FT components to select regions.
+
+5. **Real-time Mixing:**
+   - Initiate mixing and monitor progress with the displayed progress bar.
+
+## Contributors
+
+- Shehap Elhadary
+- Abdulrahman Hesham
+- Mohamed Ibrahim
+
+
+
+
+
