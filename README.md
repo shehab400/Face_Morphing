@@ -2,7 +2,7 @@
 
 ## Overview
 
-This desktop application is designed to demonstrate the relative importance of the magnitude and phase components in a 2D signal (image) using Fourier Transform Mixer. The software allows users to open and view four grayscale images simultaneously, control image sizes, customize Fourier Transform components, adjust brightness/contrast, and perform real-time mixing with customizable weights and region selections.
+This desktop application is designed to demonstrate the relative importance of the magnitude and phase components in a 2D signal (Image) using Fourier Transform Mixer. The software allows users to open and view four grayscale images simultaneously, control image sizes, customize Fourier Transform components, adjust brightness/contrast, and perform real-time mixing with customizable weights and region selections.
 
 ## Features
 
