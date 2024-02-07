@@ -53,6 +53,7 @@ This desktop application is designed to demonstrate the relative importance of t
    - Display a progress bar during the mixing process, indicating the update of the operation.
    - Cancel the previous operation if the user requests a new update while the previous one is still running (check threads).
 
+https://github.com/shehab400/Face_Morphing/assets/115353206/2ab61801-b46e-4633-b42d-7ac0a49b0ca6
 ## Usage
 
 1. **Open Images:**
